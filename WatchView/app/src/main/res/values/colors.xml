@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="fondoLogin2">#111924</color>
+    <color name="fondoLogin1">#030405</color>
+    <color name="botonLogin">#647081</color>
+    <color name="fondoTextoLogin">#2B3541</color>
+</resources>
