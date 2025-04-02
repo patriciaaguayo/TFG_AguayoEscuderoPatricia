@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/register"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/register2"
+        android:layout_width="412dp"
+        android:layout_height="285dp"
+        android:background="@drawable/fondo_register"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:context=".RegisterActivity">
+
+        <ImageButton
+            android:id="@+id/volverButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/flechavolver"
+            android:contentDescription="Volver..."
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.044"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.646" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="655dp"
+        android:gravity="top|center_horizontal"
+        android:background="@drawable/border_radius"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/baloo_thambi_2"
+            android:letterSpacing="0.2"
+            android:text="CREAR CUENTA"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="top|center">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Nombre"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout2"
+                        android:layout_width="337dp"
+                        android:layout_height="41dp"
+                        android:background="@drawable/text_radius"
+                        android:elevation="6dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp">
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/user_icon"
+                            app:srcCompat="@drawable/user_icon" />
+
+                        <EditText
+                            android:id="@+id/registerNombre"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/baloo_thambi_2"
+                            android:hint="TuNombreUsuarioAquí"
+                            android:textColorHint="@color/botonLogin"
+                            android:inputType="text"
+                            android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Correo electrónico"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.143"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                        app:layout_constraintVertical_bias="1.0" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout3"
+                        android:layout_width="337dp"
+                        android:layout_height="41dp"
+                        android:background="@drawable/text_radius"
+                        android:elevation="6dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.543"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                        app:layout_constraintVertical_bias="0.126">
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/email" />
+
+                        <EditText
+                            android:id="@+id/registerEmail"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/baloo_thambi_2"
+                            android:hint="tucorreo@gmail.com"
+                            android:textColorHint="@color/botonLogin"
+                            android:inputType="textEmailAddress"
+                            android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Contraseña"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.126"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+                        app:layout_constraintVertical_bias="0.589" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout4"
+                        android:layout_width="337dp"
+                        android:layout_height="41dp"
+                        android:background="@drawable/text_radius"
+                        android:elevation="6dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.543"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+                        app:layout_constraintVertical_bias="0.165">
+
+                        <ImageView
+                            android:id="@+id/imageView3"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/lock" />
+
+                        <EditText
+                            android:id="@+id/registerContrasenia"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/baloo_thambi_2"
+                            android:hint="Contraseña"
+                            android:textColorHint="@color/botonLogin"
+                            android:inputType="textPassword"
+                            android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Repetir contraseña"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.131"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+                        app:layout_constraintVertical_bias="0.534" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout5"
+                        android:layout_width="337dp"
+                        android:layout_height="41dp"
+                        android:background="@drawable/text_radius"
+                        android:elevation="6dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.506"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+                        app:layout_constraintVertical_bias="0.456">
+
+                        <ImageView
+                            android:id="@+id/imageView4"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/lock" />
+
+                        <EditText
+                            android:id="@+id/registerRepetirContrasenia"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/baloo_thambi_2"
+                            android:hint="Repetir contraseña"
+                            android:textColorHint="@color/botonLogin"
+                            android:inputType="textPassword"
+                            android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/registerButton"
+                    android:layout_width="150dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="@color/botonLogin"
+                    android:fontFamily="@font/baloo_thambi_2"
+                    android:text="Registrarse"
+                    android:textSize="20sp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="50dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.881" />
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -82,6 +82,133 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             );
         """
 
+        val tablaPlataforma = """
+            CREATE TABLE Plataforma (
+                idPlataforma INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombrePlataforma TEXT NOT NULL UNIQUE,
+                urlPlataforma TEXT NOT NULL
+            );
+        """
+
+        val tablaPlataforma_Titulo = """
+            CREATE TABLE Plataforma_Titulo (
+                idPlataforma INTEGER,
+                idTitulo INTEGER,
+                pais TEXT NOT NULL DEFAULT 'España',
+                disponible BOOLEAN NOT NULL DEFAULT 1,
+                PRIMARY KEY (idPlataforma, idTitulo),
+                FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma),
+                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
+            );
+        """
+
+        val tablaUsuario_Titulo = """
+            CREATE TABLE Usuario_Titulo (
+                correo TEXT,
+                idTitulo INTEGER,
+                PRIMARY KEY (correo, idTitulo),
+                FOREIGN KEY (correo) REFERENCES Usuario(correo),
+                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
+            );
+        """
+
+        val tablaEstreno = """
+            CREATE TABLE Estreno (
+                idEstreno INTEGER PRIMARY KEY AUTOINCREMENT,
+                fechaEstreno TEXT NOT NULL
+            );
+        """
+
+        val tablaEstreno_Serie = """
+            CREATE TABLE Estreno_Serie (
+                idEstreno INTEGER PRIMARY KEY,
+                temporada INTEGER NOT NULL,
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno)
+            );
+        """
+
+        val tablaEstreno_Pelicula = """
+            CREATE TABLE Estreno_Pelicula (
+                idEstreno INTEGER PRIMARY KEY,
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno)
+            );
+        """
+
+        val tablaEstreno_Titulo = """
+            CREATE TABLE Estreno_Titulo (
+                idEstreno INTEGER,
+                idTitulo INTEGER,
+                correo TEXT,
+                PRIMARY KEY (idEstreno, idTitulo, correo),
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
+                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo),
+                FOREIGN KEY (correo) REFERENCES Usuario(correo)
+            );
+        """
+
+        val tablaEstreno_Plataforma = """
+            CREATE TABLE Estreno_Plataforma (
+                idEstreno INTEGER,
+                idPlataforma INTEGER,
+                PRIMARY KEY (idEstreno, idPlataforma),
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
+                FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
+            );
+        """
+
+        /*val tablaEstreno_Usuario = """
+            CREATE TABLE Estreno_Usuario (
+                idEstreno INTEGER,
+                correo TEXT,
+                PRIMARY KEY (idEstreno, correo),
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
+                FOREIGN KEY (correo) REFERENCES Usuario(correo)
+            );
+        """*/
+
+        val tablaTop10 = """
+            CREATE TABLE Top10 (
+                idTop INTEGER PRIMARY KEY AUTOINCREMENT,
+                fechaTop TEXT NOT NULL
+            );
+        """
+
+        val tablaTop10Mezclado = """
+            CREATE TABLE Top10Mezclado (
+                idTop INTEGER PRIMARY KEY,
+                FOREIGN KEY (idTop) REFERENCES Top10(idTop)
+            );
+        """
+
+        val tablaTop10Separado = """
+            CREATE TABLE Top10Separado (
+                idTop INTEGER PRIMARY KEY,
+                tipo TEXT NOT NULL CHECK (tipo IN ('pelicula', 'serie')),
+                FOREIGN KEY (idTop) REFERENCES Top10(idTop)
+            );
+        """
+
+        val tablaTop10_Titulo = """
+            CREATE TABLE Top10_Titulo (
+                idTop INTEGER,
+                idTitulo INTEGER,
+                posicion INTEGER NOT NULL CHECK (posicion BETWEEN 1 AND 10),
+                PRIMARY KEY (idTop, idTitulo),
+                FOREIGN KEY (idTop) REFERENCES Top10(idTop),
+                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
+            );
+        """
+
+        val tablaTop10_Plataforma = """
+            CREATE TABLE Top10_Plataforma (
+                idTop INTEGER,
+                idPlataforma INTEGER,
+                PRIMARY KEY (idTop, idPlataforma),
+                FOREIGN KEY (idTop) REFERENCES Top10(idTop),
+                FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
+            );
+        """
+
         /*val tablaCestaProducto = """
             CREATE TABLE Cesta_Producto (
                 idCesta INTEGER,
@@ -227,6 +354,21 @@ Precio: 39,99€', 'Curso: Crea tu vela',
         db.execSQL(tablaGenero_Titulo)
         db.execSQL(tablaPersona)
         db.execSQL(tablaPersona_Titulo)
+        db.execSQL(tablaPlataforma)
+        db.execSQL(tablaPlataforma_Titulo)
+        db.execSQL(tablaUsuario_Titulo)
+        db.execSQL(tablaEstreno)
+        db.execSQL(tablaEstreno_Serie)
+        db.execSQL(tablaEstreno_Pelicula)
+        db.execSQL(tablaEstreno_Titulo)
+        db.execSQL(tablaEstreno_Plataforma)
+        //db.execSQL(tablaEstreno_Usuario)
+        db.execSQL(tablaTop10)
+        db.execSQL(tablaTop10Mezclado)
+        db.execSQL(tablaTop10Separado)
+        db.execSQL(tablaTop10_Titulo)
+        db.execSQL(tablaTop10_Plataforma)
+
 
        /* db.execSQL(tablaVelas)
         db.execSQL(insertVelas)
@@ -245,6 +387,22 @@ Precio: 39,99€', 'Curso: Crea tu vela',
         db.execSQL("DROP TABLE IF EXISTS Genero_Titulo")
         db.execSQL("DROP TABLE IF EXISTS Persona")
         db.execSQL("DROP TABLE IF EXISTS Persona_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Plataforma")
+        db.execSQL("DROP TABLE IF EXISTS Plataforma_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Usuario_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Estreno")
+        db.execSQL("DROP TABLE IF EXISTS Estreno_Serie")
+        db.execSQL("DROP TABLE IF EXISTS Estreno_Pelicula")
+        db.execSQL("DROP TABLE IF EXISTS Estreno_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Estreno_Plataforma")
+        //db.execSQL("DROP TABLE IF EXISTS Estreno_Usuario")
+        db.execSQL("DROP TABLE IF EXISTS Top10")
+        db.execSQL("DROP TABLE IF EXISTS Top10Mezclado")
+        db.execSQL("DROP TABLE IF EXISTS Top10Separado")
+        db.execSQL("DROP TABLE IF EXISTS Top10_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Top10_Plataforma")
+
+
         onCreate(db)
     }
 
@@ -260,17 +418,14 @@ Precio: 39,99€', 'Curso: Crea tu vela',
      *  1: Correo duplicado en bbdd
      *  2: Nombre duplicado en bbdd
      * */
-    fun insertarUsuario(correo:String,nombre:String, pass:String, direccion:String?,fotoPerfil:String?, privilegios:String?, tlfn:String?):Int{
+    fun insertarUsuario(correo:String,nombre:String, pass:String, privilegios:String?):Int{
 
         val db=this.writableDatabase
         val values= ContentValues().apply {
             put("correo",correo)
             put("nombre",nombre)
             put("pass",pass)
-            put("direccion",direccion)
-            put("fotoPerfil",fotoPerfil)
             put("privilegios",privilegios)
-            put("tlfn",tlfn)
         }
         try{
             db.insertOrThrow("usuario",null,values)
