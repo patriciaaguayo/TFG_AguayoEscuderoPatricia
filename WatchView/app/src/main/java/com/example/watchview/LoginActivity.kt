@@ -115,10 +115,8 @@ class LoginActivity : AppCompatActivity() {
             Usuario.correo = correo
             Usuario.nombre = sharedPref.getString("nombre", null)
             Usuario.pass = sharedPref.getString("pass", null)
-            Usuario.direccion = sharedPref.getString("direccion", null)
             Usuario.fotoPerfil = sharedPref.getString("fotoPerfil", null)
             Usuario.privilegios = sharedPref.getString("privilegios", null)
-            Usuario.tlfn = sharedPref.getString("tlfn", null)
 
             Usuario.privilegios
         } else {

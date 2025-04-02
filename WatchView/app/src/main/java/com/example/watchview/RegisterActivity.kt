@@ -2,6 +2,7 @@ package com.example.watchview
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -45,6 +46,13 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            // Validar el formato del correo
+            if (!verificarCorreo(email)) {
+                Toast.makeText(this, "El correo no tiene un formato válido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            
             val bbdd=BBDD(this);
 
             when (bbdd.insertarUsuario(email, nombre, pass, "usuario")) {
@@ -53,5 +61,10 @@ class RegisterActivity : AppCompatActivity() {
                 2 -> Toast.makeText(this, "Este usuario ya está registrado.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    // Método para verificar si un correo tiene el formato adecuado
+    fun verificarCorreo(correo: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(correo).matches()
     }
 }

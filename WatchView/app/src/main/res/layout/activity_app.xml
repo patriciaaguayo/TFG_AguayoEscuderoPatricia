@@ -1,10 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AppActivity">
+    android:background="@color/fondoLogin1"
+    android:id="@+id/app">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/black"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/logoinicio" />
+    </LinearLayout>
+
+    <!-- Contenedor para el Fragment -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Barra de navegación inferior -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="@color/fondoLogin2"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Íconos de la barra inferior -->
+
+        <ImageButton
+            android:id="@+id/botonInicio"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/casa"
+            android:contentDescription="inicio" />
+
+        <ImageButton
+            android:id="@+id/botonAjustes"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="40dp"
+            android:contentDescription="settings"
+            android:background="@drawable/ajustes" />
+
+        <ImageButton
+            android:id="@+id/botonLista"
+            android:layout_width="43dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="40dp"
+            android:contentDescription="cesta"
+            android:background="@drawable/lista" />
+
+        <ImageButton
+            android:id="@+id/botonBuscador"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:contentDescription="cesta"
+            android:background="@drawable/buscador" />
+    </LinearLayout>
+</LinearLayout>
