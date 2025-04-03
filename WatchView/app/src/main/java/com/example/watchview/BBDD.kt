@@ -212,7 +212,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
 
         val insertFotoPerfil = """
-            INSERT INTO FotoPerfil (nombre)
+            INSERT INTO FotoPerfil (nombreFoto)
             VALUES
             ('perfil1'),
             ('perfil2'),
@@ -223,8 +223,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """
 
         val insertAdmin = """
-            INSERT INTO Usuario (correo, nombre, pass, fotoPerfil, privilegios)
-            VALUES ("admin@admin.com", "Admin", "1234", "perfil4", "admin");
+            INSERT INTO Usuario (correo, nombre, pass, idFoto, privilegios)
+            VALUES ("admin@admin.com", "Admin", "1234", "4", "admin");
         """
 
 
@@ -446,7 +446,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             Usuario.correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
             Usuario.nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
             Usuario.pass = cursor.getString(cursor.getColumnIndexOrThrow("pass"))
-            Usuario.fotoPerfil = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("fotoPerfil"))
+            Usuario.fotoPerfil = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("idFoto"))
             Usuario.privilegios = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("privilegios"))
         }
         cursor.close()
@@ -474,11 +474,11 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     fun guardarUsuarioEnSesion(context: Context) {
         val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
-            putString("correo", Usuario.correo ?: "")
-            putString("nombre", Usuario.nombre ?: "")
-            putString("pass", Usuario.pass ?: "")
-            putString("fotoPerfil", Usuario.fotoPerfil ?: "")
-            putString("privilegios", Usuario.privilegios ?: "")
+            putString("correo", Usuario.correo)
+            putString("nombre", Usuario.nombre)
+            putString("pass", Usuario.pass)
+            putString("idFoto", Usuario.fotoPerfil)
+            putString("privilegios", Usuario.privilegios)
             apply()
         }
     }

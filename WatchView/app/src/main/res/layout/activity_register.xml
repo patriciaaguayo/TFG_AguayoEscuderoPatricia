@@ -307,7 +307,7 @@
 
                 <Button
                     android:id="@+id/registerButton"
-                    android:layout_width="150dp"
+                    android:layout_width="160dp"
                     android:layout_height="48dp"
                     android:backgroundTint="@color/botonLogin"
                     android:fontFamily="@font/baloo_thambi_2"

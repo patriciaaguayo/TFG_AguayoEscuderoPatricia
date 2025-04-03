@@ -67,7 +67,7 @@
             android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_marginRight="40dp"
-            android:contentDescription="cesta"
+            android:contentDescription="lista"
             android:background="@drawable/lista" />
 
         <ImageButton
@@ -75,7 +75,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
-            android:contentDescription="cesta"
+            android:contentDescription="buscador"
             android:background="@drawable/buscador" />
     </LinearLayout>
 </LinearLayout>

@@ -44,38 +44,48 @@
         <!-- Íconos de la barra inferior -->
 
         <ImageButton
-            android:id="@+id/botonInicioInvitado"
-            android:layout_width="45dp"
+            android:id="@+id/botonInicioAdmin"
+            android:layout_width="40dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
-            android:layout_marginRight="40dp"
+            android:layout_marginRight="35dp"
             android:background="@drawable/casa"
             android:contentDescription="inicio" />
 
         <ImageButton
-            android:id="@+id/botonAjustesInvitado"
+            android:id="@+id/botonAdmin"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="35dp"
+            android:background="@drawable/admin"
+            android:contentDescription="inicio"/>
+
+        <ImageButton
+            android:id="@+id/botonAjustesAdmin"
             android:layout_width="50dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
-            android:layout_marginRight="40dp"
+            android:layout_marginRight="35dp"
             android:contentDescription="settings"
             android:background="@drawable/ajustes" />
 
         <ImageButton
-            android:id="@+id/botonListaInvitado"
+            android:id="@+id/botonListaAdmin"
             android:layout_width="43dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
-            android:layout_marginRight="40dp"
+            android:layout_marginRight="35dp"
             android:contentDescription="lista"
             android:background="@drawable/lista" />
 
         <ImageButton
-            android:id="@+id/botonBuscadorInvitado"
+            android:id="@+id/botonBuscadorAdmin"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
             android:contentDescription="buscador"
             android:background="@drawable/buscador" />
+
     </LinearLayout>
 </LinearLayout>
