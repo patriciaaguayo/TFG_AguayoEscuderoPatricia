@@ -41,12 +41,20 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 descripcion TEXT NOT NULL,
                 fecha TEXT NOT NULL,
                 fechaFin TEXT,
-                poster TEXT NOT NULL, 
                 temporadas INTEGER,
                 duracion INTEGER NOT NULL,
                 tipo TEXT NOT NULL CHECK (tipo IN ('pelicula', 'serie')),
                 calificacion REAL NOT NULL
             );
+        """
+
+        val tablaPoster_Titulo = """
+            CREATE TABLE Poster_Titulo (
+                idPoster INTEGER PRIMARY KEY AUTOINCREMENT,
+                urlPoster TEXT NOT NULL,
+                idTitulo INTEGER,
+                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
+                );
         """
 
         val tablaGenero = """
@@ -232,6 +240,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaUsuario)
         db.execSQL(tablaFotoPerfil)
         db.execSQL(tablaTitulo)
+        db.execSQL(tablaPoster_Titulo)
         db.execSQL(tablaGenero)
         db.execSQL(tablaGenero_Titulo)
         db.execSQL(tablaPersona)
@@ -253,19 +262,13 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(insertFotoPerfil)
         db.execSQL(insertAdmin)
 
-       /* db.execSQL(tablaVelas)
-        db.execSQL(insertVelas)
-        db.execSQL(insertVelas2)
-        db.execSQL(insertAdmin)
-        db.execSQL(insertCurso)
-        db.execSQL(insertCurso2)*/
-
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS Usuario")
         db.execSQL("DROP TABLE IF EXISTS FotoPerfil")
         db.execSQL("DROP TABLE IF EXISTS Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Poster_Titulo")
         db.execSQL("DROP TABLE IF EXISTS Genero")
         db.execSQL("DROP TABLE IF EXISTS Genero_Titulo")
         db.execSQL("DROP TABLE IF EXISTS Persona")
@@ -411,31 +414,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             false // En caso de error, devuelve false
         }
     }
-
-/*
-    // Método para añadir un nuevo usuario
-
-    fun insertarUsuario2(correo: String, nombre: String, pass: String, tlfn: String, fotoPerfil: String): Int {
-        val db = this.writableDatabase
-        val values = ContentValues().apply {
-            put("correo", correo)
-            put("nombre", nombre)
-            put("pass", pass)
-            put("tlfn", tlfn)
-            put("fotoPerfil", fotoPerfil)
-        }
-        return try {
-            db.insertOrThrow("Usuario", null, values)
-            db.close()
-            0 // Inserción correcta
-        } catch (e: SQLiteConstraintException) {
-            when {
-                e.message?.contains("UNIQUE constraint failed: Usuario.correo") == true -> 1 // Correo duplicado
-                e.message?.contains("UNIQUE constraint failed: Usuario.nombre") == true -> 2 // Nombre duplicado
-                else -> -1 // Otro error
-            }
-        }
-    }*/
 
     fun establecerUsuario(nombre: String) {
         val db = this.readableDatabase

@@ -52,5 +52,16 @@ dependencies {
     implementation (libs.androidx.cardview)
 
     implementation(libs.glide)
+
+    // WorkManager (para ejecutar la actualización cada 24h)
+    implementation(libs.androidx.work.runtime.ktx)
+
+    // Retrofit (para hacer las peticiones a la API)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGson)
+
+    // OkHttp (para logs de las peticiones)
+    implementation(libs.okHttpLoggingInterceptor)
+
     annotationProcessor(libs.compiler)
 }
