@@ -36,7 +36,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         val tablaTitulo ="""
             CREATE TABLE Titulo (
-                idTitulo INTEGER PRIMARY KEY AUTOINCREMENT,
+                idTitulo INTEGER PRIMARY KEY,
                 nombre TEXT NOT NULL,
                 descripcion TEXT NOT NULL,
                 fecha TEXT NOT NULL,
@@ -44,7 +44,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 temporadas INTEGER,
                 duracion INTEGER NOT NULL,
                 tipo TEXT NOT NULL CHECK (tipo IN ('pelicula', 'serie')),
-                calificacion REAL NOT NULL
+                rating INTEGER NOT NULL
             );
         """
 
@@ -208,8 +208,18 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             );
         """
 
-        val tablaTop10_Plataforma = """
-            CREATE TABLE Top10_Plataforma (
+        val tablaTop10Separado_Plataforma = """
+            CREATE TABLE Top10Separado_Plataforma (
+                idTop INTEGER,
+                idPlataforma INTEGER,
+                PRIMARY KEY (idTop, idPlataforma),
+                FOREIGN KEY (idTop) REFERENCES Top10(idTop),
+                FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
+            );
+        """
+
+        val tablaTop10Mezclado_Plataforma = """
+            CREATE TABLE Top10Mezclado_Plataforma (
                 idTop INTEGER,
                 idPlataforma INTEGER,
                 PRIMARY KEY (idTop, idPlataforma),
@@ -235,8 +245,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             VALUES ("admin@admin.com", "Admin", "1234", "4", "admin");
         """
 
-
-
         db.execSQL(tablaUsuario)
         db.execSQL(tablaFotoPerfil)
         db.execSQL(tablaTitulo)
@@ -258,7 +266,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaTop10Mezclado)
         db.execSQL(tablaTop10Separado)
         db.execSQL(tablaTop10_Titulo)
-        db.execSQL(tablaTop10_Plataforma)
+        db.execSQL(tablaTop10Separado_Plataforma)
+        db.execSQL(tablaTop10Mezclado_Plataforma)
         db.execSQL(insertFotoPerfil)
         db.execSQL(insertAdmin)
 
@@ -285,7 +294,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL("DROP TABLE IF EXISTS Top10")
         db.execSQL("DROP TABLE IF EXISTS Top10Mezclado")
         db.execSQL("DROP TABLE IF EXISTS Top10Separado")
-        db.execSQL("DROP TABLE IF EXISTS Top10_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Top10Separado_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Top10Mezclado_Titulo")
         db.execSQL("DROP TABLE IF EXISTS Top10_Plataforma")
 
         onCreate(db)
@@ -486,5 +496,34 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         return resultado > 0
     }
+
+    // Métodos para obtener los datos de los títulos
+
+    fun insertarTitulo(db: SQLiteDatabase, titulo: Titulo) {
+        val values = ContentValues().apply {
+            put("idTitulo", titulo.idTitulo)
+            put("nombre", titulo.nombre)
+            put("descripcion", titulo.descripcion)
+            put("fecha", titulo.fecha)
+            put("duracion", titulo.duracion ?: 0) // Si es null, asignamos 0
+            put("tipo", titulo.tipo)
+            put("rating", titulo.rating)
+            put("temporadas", titulo.temporadas ?: 0) // Si es null, asignamos 0
+        }
+        db.insert("Titulo", null, values)
+
+        // Insertar temporadas si es una serie
+        if (titulo.tipo == "serie" && titulo.seasonInfo != null) {
+            titulo.seasonInfo.forEach { temporada ->
+                val valuesTemporada = ContentValues().apply {
+                    put("idTitulo", titulo.idTitulo)
+                    put("temporada", temporada.numero)
+                    put("fechaEstreno", temporada.fechaEstreno ?: "Desconocida")
+                }
+                db.insert("Estreno_Serie", null, valuesTemporada)
+            }
+        }
+    }
+
 
 }

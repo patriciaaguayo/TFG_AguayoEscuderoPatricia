@@ -13,6 +13,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 
 
 class LoginActivity : AppCompatActivity() {
@@ -65,38 +67,38 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun iniciarSesion(){
+    private fun iniciarSesion() {
+        var nombre:String? = findViewById<EditText>(R.id.loginEmail).text.toString()
+        val pass = findViewById<EditText>(R.id.loginPass).text.toString()
+        val bd = BBDD(this)
 
-        var nombre:String?=findViewById<EditText>(R.id.loginEmail).text.toString()
-        val pass=findViewById<EditText>(R.id.loginPass).text.toString()
-        val bd=BBDD(this)
+        nombre = bd.encontrarUsuario(nombre)
 
-        nombre=bd.encontrarUsuario(nombre)
+        if (nombre != null) {
+            val quienEs = bd.verificarUsuario(nombre, pass)
 
-        if(nombre!=null){
-
-            val quienEs=bd.verificarUsuario(nombre,pass)
-
-            if(quienEs[0]){ // devuelve true si la contraseña es correcta
+            if (quienEs[0]) { // la contraseña es correcta
                 bd.establecerUsuario(nombre)
                 bd.guardarUsuarioEnSesion(this)
-                if(quienEs[1]){ //devuelve true si el user es administrador
-
+                if (quienEs[1]) { // usuario administrador
                     val intent = Intent(this, ActivityWatchView::class.java)
-
-                    intent.putExtra("fragmento","MenuAdministrador")
+                    intent.putExtra("fragmento", "MenuAdministrador")
                     startActivity(intent)
-                }else{
+                } else {
+                    // Activar el Worker para actualizar la base de datos
+                    val workRequest = OneTimeWorkRequestBuilder<ActualizarBBDDWorker>()
+                        .build()
+                    WorkManager.getInstance(this).enqueue(workRequest)
                     abrirActivity(AppActivity::class.java)
                 }
-
-            }else{
-                Toast.makeText(this,"Contraseña incorrecta...",Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Contraseña incorrecta...", Toast.LENGTH_LONG).show()
             }
-        }else{
-            Toast.makeText(this,"Usuario no encontrado",Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_LONG).show()
         }
     }
+
 
     fun saveUser(context: Context) {
         val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
