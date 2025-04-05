@@ -434,7 +434,19 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             Usuario.correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
             Usuario.nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
             Usuario.pass = cursor.getString(cursor.getColumnIndexOrThrow("pass"))
-            Usuario.fotoPerfil = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("idFoto"))
+            val idFoto = cursor.getInt(cursor.getColumnIndexOrThrow("idFoto"))
+
+            // Obtener el nombre de la imagen usando idFoto
+            val fotoCursor = db.rawQuery(
+                "SELECT nombreFoto FROM FotoPerfil WHERE idFoto = ?",
+                arrayOf(idFoto.toString())
+            )
+
+            val nombreFoto = if (fotoCursor.moveToFirst()) fotoCursor.getString(0) else "perfil1"
+            fotoCursor.close()
+
+            Usuario.fotoPerfil = nombreFoto
+
             Usuario.privilegios = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("privilegios"))
         }
         cursor.close()
@@ -465,7 +477,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             putString("correo", Usuario.correo)
             putString("nombre", Usuario.nombre)
             putString("pass", Usuario.pass)
-            putString("idFoto", Usuario.fotoPerfil)
+            putString("fotoPerfil", Usuario.fotoPerfil)
             putString("privilegios", Usuario.privilegios)
             apply()
         }
@@ -498,32 +510,5 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     }
 
     // Métodos para obtener los datos de los títulos
-
-    fun insertarTitulo(db: SQLiteDatabase, titulo: Titulo) {
-        val values = ContentValues().apply {
-            put("idTitulo", titulo.idTitulo)
-            put("nombre", titulo.nombre)
-            put("descripcion", titulo.descripcion)
-            put("fecha", titulo.fecha)
-            put("duracion", titulo.duracion ?: 0) // Si es null, asignamos 0
-            put("tipo", titulo.tipo)
-            put("rating", titulo.rating)
-            put("temporadas", titulo.temporadas ?: 0) // Si es null, asignamos 0
-        }
-        db.insert("Titulo", null, values)
-
-        // Insertar temporadas si es una serie
-        if (titulo.tipo == "serie" && titulo.seasonInfo != null) {
-            titulo.seasonInfo.forEach { temporada ->
-                val valuesTemporada = ContentValues().apply {
-                    put("idTitulo", titulo.idTitulo)
-                    put("temporada", temporada.numero)
-                    put("fechaEstreno", temporada.fechaEstreno ?: "Desconocida")
-                }
-                db.insert("Estreno_Serie", null, valuesTemporada)
-            }
-        }
-    }
-
 
 }

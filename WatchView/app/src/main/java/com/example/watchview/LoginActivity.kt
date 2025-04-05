@@ -86,9 +86,9 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(intent)
                 } else {
                     // Activar el Worker para actualizar la base de datos
-                    val workRequest = OneTimeWorkRequestBuilder<ActualizarBBDDWorker>()
+                   /* val workRequest = OneTimeWorkRequestBuilder<ActualizarBBDDWorker>()
                         .build()
-                    WorkManager.getInstance(this).enqueue(workRequest)
+                    WorkManager.getInstance(this).enqueue(workRequest)*/
                     abrirActivity(AppActivity::class.java)
                 }
             } else {

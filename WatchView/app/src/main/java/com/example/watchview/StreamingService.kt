@@ -1,6 +1,6 @@
 package com.example.watchview
 
-import retrofit2.Response
+/*import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -13,4 +13,4 @@ interface StreamingService {
         @Query("show_type") showType: String,
         @Query("apiKey") apiKey: String
     ): Response<ApiResponse>
-}
+}*/

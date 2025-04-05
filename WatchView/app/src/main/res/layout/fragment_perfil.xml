@@ -3,169 +3,164 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/perfilFragment"
     android:background="@color/fondoLogin1"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SettingsFragment">
 
-
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
         <ImageView
-            android:id="@+id/Flecha"
+            android:id="@+id/FlechaVolverPerfil"
             android:layout_width="20dp"
             android:layout_height="80dp"
             android:layout_weight="1"
             android:background="@color/fondoLogin2"
             android:padding="8dp"
-            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
             android:scaleType="fitCenter"
             android:src="@drawable/flechavolver" />
 
         <TextView
-            android:id="@+id/Administrador"
+            android:id="@+id/perfilTextView"
             android:layout_width="300dp"
             android:layout_height="80dp"
             android:layout_weight="1"
             android:background="@color/fondoLogin2"
             android:fontFamily="@font/baloo_thambi_2"
             android:gravity="center"
-            android:paddingRight="30dp"
-            android:text="Ajustes"
+            android:paddingEnd="30dp"
+            android:text="Perfil"
             android:textColor="@color/white"
             android:textAlignment="center"
             android:textSize="30sp" />
 
-
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ContenedorGeneral"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+    <ImageView
+        android:id="@+id/fotoPerfil"
+        android:layout_width="171dp"
+        android:layout_height="167dp"
+        android:src="@drawable/default_perfil"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
+        app:layout_constraintVertical_bias="0.073" />
 
-    <LinearLayout
-        android:id="@+id/ContenedorEditarPerfil"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/nombreUsuario"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
-        android:background="@color/fondoTextoLogin"
-        android:gravity="center"
-        android:padding="5dp"
+        android:text="Nombre Usuario"
+        android:textColor="@color/white"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.079">
-
-        <ImageView
-            android:id="@+id/fotoUsuario"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            />
-
-        <TextView
-            android:id="@+id/Cursos"
-            android:layout_width="239dp"
-            android:layout_height="70dp"
-            android:textColor="@color/white"
-            android:fontFamily="@font/baloo_thambi_2"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:text="Editar perfil"
-            android:layout_marginLeft="20dp"
-            android:textAlignment="textStart"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.0"
-            tools:ignore="RtlCompat" />
-
-        <ImageView
-            android:id="@+id/flechacursos"
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
-            android:layout_weight="1"
-            android:padding="25dp"
-            app:srcCompat="@drawable/entrar" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
+        app:layout_constraintVertical_bias="0.331" />
 
     <LinearLayout
-        android:id="@+id/Contenedorusuario"
+        android:id="@+id/ContenedorCambiarPass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
         android:background="@color/fondoTextoLogin"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.207">
+        app:layout_constraintVertical_bias="0.564">
 
         <TextView
-            android:id="@+id/Usuario"
-            android:layout_width="239dp"
+            android:layout_width="339dp"
             android:layout_height="70dp"
-            android:textColor="@color/white"
             android:fontFamily="@font/baloo_thambi_2"
             android:gravity="center"
             android:paddingLeft="50dp"
-            android:text="Version"
-            android:textAlignment="textStart"
+            android:text="Cambiar Contraseña"
+            android:textAlignment="center"
+            android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.0"
-            tools:ignore="RtlCompat" />
+            app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/NumVersion"
-            android:layout_width="170dp"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="70dp"
-            android:textColor="@color/white"
-            android:fontFamily="@font/baloo_thambi_2"
-            android:gravity="center"
-            android:paddingLeft="50dp"
-            android:text="1.01.1"
-            android:textAlignment="textStart"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.0"
-            tools:ignore="RtlCompat" />
-
-
+            android:layout_weight="1"
+            android:padding="27dp"
+            app:srcCompat="@drawable/entrar" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ContenedorCambiarFoto"
+        android:layout_width="412dp"
+        android:layout_height="73dp"
+        android:background="@color/fondoTextoLogin"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.702">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="339dp"
+            android:layout_height="70dp"
+            android:fontFamily="@font/baloo_thambi_2"
+            android:gravity="center"
+            android:paddingLeft="50dp"
+            android:text="Cambiar foto de perfil"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:padding="27dp"
+            app:srcCompat="@drawable/entrar" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/cerrarSesionbutton"
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:backgroundTint="@color/botonLogin"
+        android:fontFamily="@font/baloo_thambi_2"
+        android:text="Cerrar sesión"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout6"
+        app:layout_constraintVertical_bias="0.88" />
+
+</androidx.constraintlayout.widget.ConstraintLayout >

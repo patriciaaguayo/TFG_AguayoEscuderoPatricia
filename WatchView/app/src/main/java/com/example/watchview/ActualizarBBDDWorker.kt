@@ -1,6 +1,6 @@
 package com.example.watchview
 
-import android.content.Context
+/*import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.work.Worker
@@ -155,4 +155,4 @@ class ActualizarBBDDWorker(
         val tipo: String,
         val rating: Int
     )
-}
+}*/

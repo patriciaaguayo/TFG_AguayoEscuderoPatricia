@@ -1,6 +1,6 @@
 package com.example.watchview
 
-import com.google.gson.annotations.SerializedName
+/*import com.google.gson.annotations.SerializedName
 
 data class ApiResponse(val results: List<Titulo>)
 
@@ -25,4 +25,4 @@ data class Temporada(
 data class PlataformaInfo(
     @SerializedName("service") val nombrePlataforma: String,
     @SerializedName("link") val urlPlataforma: String
-)
+)*/
