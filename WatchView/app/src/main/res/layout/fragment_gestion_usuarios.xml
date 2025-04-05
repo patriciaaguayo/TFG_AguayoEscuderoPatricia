@@ -1,14 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/fondoLogin1"
     tools:context=".GestionUsuarios">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/usuarios"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/fondoLogin2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.135">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/FlechaVolverUsuarios"
+            android:layout_width="20dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:paddingStart="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/flechavolver" />
+
+        <TextView
+            android:id="@+id/usuariosTextView"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:fontFamily="@font/baloo_thambi_2"
+            android:gravity="center"
+            android:paddingEnd="30dp"
+            android:text="Usuarios"
+            android:textAlignment="center"
+            android:textSize="30sp" />
+
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.skydoves.expandablelayout.ExpandableLayout
+                android:id="@+id/expandableLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:expandable_duration="500"
+                app:expandable_animation="overshoot"
+                app:expandable_isExpanded="false"
+                app:expandable_parentLayout="@layout/insertar_usuarios"
+                app:expandable_secondLayout="@layout/insertar_usuarios_exp"/>
+
+            <com.skydoves.expandablelayout.ExpandableLayout
+                android:id="@+id/expandableLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                app:expandable_duration="300"
+                app:expandable_animation="overshoot"
+                app:expandable_parentLayout="@layout/eliminar_usuarios"
+                app:expandable_secondLayout="@layout/eliminar_usuarios_exp"
+                app:expandable_isExpanded="false"/>
+
+            <com.skydoves.expandablelayout.ExpandableLayout
+                android:id="@+id/expandableLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                app:expandable_duration="300"
+                app:expandable_animation="overshoot"
+                app:expandable_parentLayout="@layout/modificar_usuarios"
+                app:expandable_secondLayout="@layout/modificar_usuarios_exp"
+                app:expandable_isExpanded="false" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -392,29 +392,12 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
     // Método para poder modificar un usuario
 
-    fun modificarUsuario(correo: String, pass: String, nombreFoto: String): Boolean {
+    fun modificarUsuario(correo: String, nombre: String, pass: String): Boolean {
         val db = this.writableDatabase
-
-        // Obtener el idFoto correspondiente a la imagen
-        val cursor = db.rawQuery(
-            "SELECT idFoto FROM FotoPerfil WHERE nombreFoto = ?", arrayOf(nombreFoto)
-        )
-
-        val idFoto = if (cursor.moveToFirst()) cursor.getInt(0) else null
-        cursor.close()
-
-        // Si la imagen no existe en la tabla FotoPerfil, devuelve false
-        if (idFoto == null) {
-            db.close()
-            return false
-        }
-
-        // Actualizar la contraseña y el idFoto en la tabla Usuario
         val values = ContentValues().apply {
+            put("nombre", nombre)
             put("pass", pass)
-            put("idFoto", idFoto)  // Guardamos el ID de la imagen en Usuario
         }
-
         return try {
             val rowsUpdated = db.update("Usuario", values, "correo = ?", arrayOf(correo))
             db.close()

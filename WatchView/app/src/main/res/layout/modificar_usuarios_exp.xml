@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingBottom="70dp"
+    android:layout_height="wrap_content"
+    android:background="@color/fondoTextoLogin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="142dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="Nombre:"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
+
+        <EditText
+            android:id="@+id/ModificarNombreUsuario"
+            android:layout_width="184dp"
+            android:layout_height="50dp"
+            android:background="@drawable/crud_radius"
+            android:contentDescription="content" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:padding="20dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="142dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="Correo:"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
+        <EditText
+            android:id="@+id/ModificarCorreoUsuario"
+            android:layout_width="184dp"
+            android:layout_height="50dp"
+            android:background="@drawable/crud_radius"
+            android:contentDescription="content" />
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:padding="20dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="142dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="Constraseña:"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
+        <EditText
+            android:id="@+id/ModificarPasswordUsuario"
+            android:layout_width="184dp"
+            android:layout_height="50dp"
+            android:background="@drawable/crud_radius"
+            android:contentDescription="content" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/ModificarButtonUsuarios"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Modificar"
+        android:backgroundTint="@color/botonLogin" />
+
+</LinearLayout>
