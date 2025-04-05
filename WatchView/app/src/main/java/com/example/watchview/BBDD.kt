@@ -7,10 +7,10 @@ import android.content.Intent
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
-import android.util.Patterns
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.database.getStringOrNull
+import java.io.File
 
 class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", null, 1) {
 
@@ -492,6 +492,62 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return resultado > 0
     }
 
+    // Método para eliminar una foto
+
+    fun eliminarFoto(codigo: String): Boolean {
+        val db = this.writableDatabase
+        return try {
+            val rowsDeleted = db.delete("FotoPerfil", "idFoto = ?", arrayOf(codigo))
+            db.close()
+            rowsDeleted > 0 // Devuelve true si se eliminó al menos ua Foto
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false // En caso de error, devuelve false
+        }
+    }
+
+    // Método para insertar una foto
+
+    fun insertarFoto(nombreFoto: String, selectedImageUri: Uri): Boolean {
+        val db = this.writableDatabase
+
+        // Verificar si el nombre de la foto ya existe
+        if (existeNombreFoto(nombreFoto)) {
+            // Si ya existe, retorna false
+            return false
+        }
+
+        // Convertir la imagen en un archivo
+        val imagePath = selectedImageUri.path ?: return false
+        val imageFile = File(imagePath)
+        val imageBytes = imageFile.readBytes() // Convierte la imagen en bytes
+
+        val values = ContentValues().apply {
+            put("nombreFoto", nombreFoto)
+        }
+
+        return try {
+            // Insertar los datos (nombre de la foto) en la tabla FotoPerfil
+            db.insert("FotoPerfil", null, values)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        } finally {
+            db.close()
+        }
+    }
+
     // Métodos para obtener los datos de los títulos
+
+    fun existeNombreFoto(nombre: String): Boolean {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT 1 FROM FotoPerfil WHERE nombreFoto = ?", arrayOf(nombre))
+        val existe = cursor.count > 0
+        cursor.close()
+        db.close()
+        return existe
+    }
+
 
 }
