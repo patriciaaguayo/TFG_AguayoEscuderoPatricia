@@ -1,59 +1,64 @@
 package com.example.watchview
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [BuscadorFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class BuscadorFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_buscador, container, false)
+
+        val view = inflater.inflate(R.layout.fragment_buscador, container, false)
+
+        val db=BBDD(requireContext())
+        //val recyclerView = view.findViewById<RecyclerView>(R.id.recycler)
+        //recyclerView.layoutManager = LinearLayoutManager(context)
+
+        //val listaVelas = db.listaVelas()
+
+        /*val adaptador = Adaptador(listaVelas){
+                vela->mostrarInfoVela(vela)
+        }
+
+        recyclerView.adapter = adaptador*/
+
+        view.findViewById<ImageButton>(R.id.botonBuscador).setOnClickListener {
+            // Regresar al fragmento anterior en la pila de retroceso
+            parentFragmentManager.popBackStack()
+        }
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BuscadorFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            BuscadorFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    // Método para mostrar la información del curso
+
+    /*private fun mostrarInfoVela(vela:Vela) {
+        val fragment=InformacionVela()
+        val bundle=Bundle()
+        bundle.putParcelable("vela",vela)
+        fragment.arguments=bundle
+        fragmentLoader(fragment)
     }
+
+    private fun fragmentLoader(fragment:Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }*/
 }

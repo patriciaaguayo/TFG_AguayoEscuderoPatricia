@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -38,7 +39,7 @@ class SettingsFragment : Fragment() {
             .into(fotoUsuario)
 
         flecha.setOnClickListener(){
-            requireActivity().finish()
+            parentFragmentManager.popBackStack()
         }
 
         contenedor.setOnClickListener(){
