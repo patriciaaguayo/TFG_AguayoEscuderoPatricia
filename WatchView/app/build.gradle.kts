@@ -64,4 +64,7 @@ dependencies {
     implementation(libs.okHttpLoggingInterceptor)
 
     annotationProcessor(libs.compiler)
+
+    // Gson
+    implementation(libs.gson)
 }

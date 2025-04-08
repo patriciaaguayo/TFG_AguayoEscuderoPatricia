@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.core.database.getStringOrNull
 import java.io.File
@@ -36,45 +37,45 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         val tablaTitulo ="""
             CREATE TABLE Titulo (
-                idTitulo INTEGER PRIMARY KEY,
+                idTitulo TEXT PRIMARY KEY,
                 nombre TEXT NOT NULL,
-                descripcion TEXT NOT NULL,
-                fecha TEXT NOT NULL,
+                nombreOriginal TEXT,
+                descripcion TEXT,
+                fechaInicio TEXT NOT NULL,
                 fechaFin TEXT,
                 temporadas INTEGER,
-                duracion INTEGER NOT NULL,
-                tipo TEXT NOT NULL CHECK (tipo IN ('pelicula', 'serie')),
+                tipo TEXT NOT NULL CHECK (tipo IN ('movie', 'series')),
                 rating INTEGER NOT NULL
             );
         """
 
         val tablaPoster_Titulo = """
             CREATE TABLE Poster_Titulo (
-                idPoster INTEGER PRIMARY KEY AUTOINCREMENT,
+                idPoster TEXT PRIMARY KEY,
                 urlPoster TEXT NOT NULL,
-                idTitulo INTEGER,
+                idTitulo TEXT,
                 FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
                 );
         """
 
         val tablaGenero = """
             CREATE TABLE Genero (
-               idGenero INTEGER PRIMARY KEY AUTOINCREMENT,
+               idGenero TEXT PRIMARY KEY,
                 nombreGenero TEXT NOT NULL
             );
         """
 
         val tablaGenero_Titulo = """
             CREATE TABLE Genero_Titulo (
-                idGenero INTEGER,
-                idTitulo INTEGER,
+                idGenero TEXT,
+                idTitulo TEXT,
                 PRIMARY KEY (idGenero, idTitulo),
                 FOREIGN KEY (idGenero) REFERENCES Genero(idGenero),
                 FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
             );
         """
 
-        val tablaPersona = """
+        /*val tablaPersona = """
             CREATE TABLE Persona (
                 idPersona INTEGER PRIMARY KEY AUTOINCREMENT,
                 nombrePersona TEXT NOT NULL
@@ -89,11 +90,11 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 FOREIGN KEY (idPersona) REFERENCES Persona(idPersona),
                 FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
             );
-        """
+        """*/
 
         val tablaPlataforma = """
             CREATE TABLE Plataforma (
-                idPlataforma INTEGER PRIMARY KEY AUTOINCREMENT,
+                idPlataforma TEXT PRIMARY KEY,
                 nombrePlataforma TEXT NOT NULL UNIQUE,
                 urlPlataforma TEXT NOT NULL
             );
@@ -101,9 +102,9 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         val tablaPlataforma_Titulo = """
             CREATE TABLE Plataforma_Titulo (
-                idPlataforma INTEGER,
-                idTitulo INTEGER,
-                pais TEXT NOT NULL DEFAULT 'España',
+                idPlataforma TEXT,
+                idTitulo TEXT,
+                pais TEXT NOT NULL DEFAULT 'es',
                 disponible BOOLEAN NOT NULL DEFAULT 1,
                 PRIMARY KEY (idPlataforma, idTitulo),
                 FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma),
@@ -114,7 +115,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaUsuario_Titulo = """
             CREATE TABLE Usuario_Titulo (
                 correo TEXT,
-                idTitulo INTEGER,
+                idTitulo TEXT,
                 PRIMARY KEY (correo, idTitulo),
                 FOREIGN KEY (correo) REFERENCES Usuario(correo),
                 FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
@@ -146,7 +147,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaEstreno_Titulo = """
             CREATE TABLE Estreno_Titulo (
                 idEstreno INTEGER,
-                idTitulo INTEGER,
+                idTitulo TEXT,
                 correo TEXT,
                 PRIMARY KEY (idEstreno, idTitulo, correo),
                 FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
@@ -158,7 +159,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaEstreno_Plataforma = """
             CREATE TABLE Estreno_Plataforma (
                 idEstreno INTEGER,
-                idPlataforma INTEGER,
+                idPlataforma TEXT,
                 PRIMARY KEY (idEstreno, idPlataforma),
                 FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
                 FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
@@ -192,7 +193,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaTop10Separado = """
             CREATE TABLE Top10Separado (
                 idTop INTEGER PRIMARY KEY,
-                tipo TEXT NOT NULL CHECK (tipo IN ('pelicula', 'serie')),
+                tipo TEXT NOT NULL CHECK (tipo IN ('movie', 'series')),
                 FOREIGN KEY (idTop) REFERENCES Top10(idTop)
             );
         """
@@ -200,7 +201,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaTop10_Titulo = """
             CREATE TABLE Top10_Titulo (
                 idTop INTEGER,
-                idTitulo INTEGER,
+                idTitulo TEXT,
                 posicion INTEGER NOT NULL CHECK (posicion BETWEEN 1 AND 10),
                 PRIMARY KEY (idTop, idTitulo),
                 FOREIGN KEY (idTop) REFERENCES Top10(idTop),
@@ -211,7 +212,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaTop10Separado_Plataforma = """
             CREATE TABLE Top10Separado_Plataforma (
                 idTop INTEGER,
-                idPlataforma INTEGER,
+                idPlataforma TEXT,
                 PRIMARY KEY (idTop, idPlataforma),
                 FOREIGN KEY (idTop) REFERENCES Top10(idTop),
                 FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
@@ -221,7 +222,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaTop10Mezclado_Plataforma = """
             CREATE TABLE Top10Mezclado_Plataforma (
                 idTop INTEGER,
-                idPlataforma INTEGER,
+                idPlataforma TEXT,
                 PRIMARY KEY (idTop, idPlataforma),
                 FOREIGN KEY (idTop) REFERENCES Top10(idTop),
                 FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
@@ -242,7 +243,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         val insertAdmin = """
             INSERT INTO Usuario (correo, nombre, pass, idFoto, privilegios)
-            VALUES ("admin@admin.com", "Admin", "1234", "4", "admin");
+            VALUES ("admin@gmail.com", "Admin", "1234", "4", "admin");
         """
 
         db.execSQL(tablaUsuario)
@@ -251,8 +252,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaPoster_Titulo)
         db.execSQL(tablaGenero)
         db.execSQL(tablaGenero_Titulo)
-        db.execSQL(tablaPersona)
-        db.execSQL(tablaPersona_Titulo)
+        //db.execSQL(tablaPersona)
+        // db.execSQL(tablaPersona_Titulo)
         db.execSQL(tablaPlataforma)
         db.execSQL(tablaPlataforma_Titulo)
         db.execSQL(tablaUsuario_Titulo)
@@ -549,5 +550,25 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return existe
     }
 
+    // Método para insertar los géneros
+
+    // Función para insertar un género en la base de datos
+    fun insertGenero(idGenero: String, nombreGenero: String) {
+        try {
+            val db = writableDatabase
+            val values = ContentValues()
+            values.put("idGenero", idGenero)
+            values.put("nombreGenero", nombreGenero)
+
+            val result = db.insert("Genero", null, values)
+            if (result != -1L) {
+                Log.d("GeneroInsertado", "Inserción exitosa para el género: $nombreGenero")
+            } else {
+                Log.e("GeneroInsertado", "Error al insertar el género: $nombreGenero")
+            }
+        } catch (e: Exception) {
+            Log.e("GeneroInsertado", "Error en insertGenero: ${e.message}")
+        }
+    }
 
 }

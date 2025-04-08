@@ -2,4 +2,5 @@
     <string name="app_name">WatchView</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="api_key">28888f078fmshd897f3917e4d0e4p14c168jsnd6444299fc66</string>
 </resources>
