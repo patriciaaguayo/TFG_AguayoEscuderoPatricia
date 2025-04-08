@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingBottom="70dp"
+    android:layout_height="wrap_content"
+    android:background="@color/fondoLogin2">
+
+    <!-- Sección para seleccionar uno o varios géneros -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selecciona género(s):"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:layout_marginBottom="10dp"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+
+            <CheckBox android:id="@+id/checkAccion" android:text="Acción" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkAnimacion" android:text="Animación" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkAventura" android:text="Aventura" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkCienciaFiccion" android:text="Ciencia Ficción" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkComedia" android:text="Comedia" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkCrimen" android:text="Crimen" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkDocumental" android:text="Documental" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkDrama" android:text="Drama" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkFantasia" android:text="Fantasía" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkMisterio" android:text="Misterio" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkRomance" android:text="Romance" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkThriller" android:text="Thriller" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkHorror" android:text="Horror" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkWestern" android:text="Western" style="@style/CheckBoxStyle"/>
+        </GridLayout>
+
+
+        <!-- Aquí colocaremos los CheckBoxes en GridLayout -->
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/ButtonBuscarFiltro"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Buscar"
+        android:backgroundTint="@color/botonLogin" />
+
+</LinearLayout>

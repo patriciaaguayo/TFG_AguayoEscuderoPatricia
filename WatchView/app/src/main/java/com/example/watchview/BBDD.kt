@@ -30,7 +30,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val tablaFotoPerfil = """
             CREATE TABLE FotoPerfil (
                idFoto INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombreFoto TEXT NOT NULL UNIQUE
+               nombreFoto TEXT NOT NULL UNIQUE
             );
         """
 

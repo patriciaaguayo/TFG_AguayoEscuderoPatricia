@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/FlechaBuscador"
             android:layout_width="20dp"
             android:layout_height="80dp"
@@ -30,7 +30,9 @@
             android:padding="8dp"
             android:paddingLeft="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/flechavolver" />
+            android:src="@drawable/flechavolver"
+            android:contentDescription="Volver"
+            />
 
         <TextView
             android:id="@+id/Buscador"
@@ -90,9 +92,29 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.skydoves.expandablelayout.ExpandableLayout
+                android:id="@+id/expandableLayoutFiltro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:expandable_duration="500"
+                app:expandable_animation="overshoot"
+                app:expandable_isExpanded="false"
+                app:expandable_parentLayout="@layout/filtro_genero"
+                app:expandable_secondLayout="@layout/filtro_genero_exp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerTitulos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

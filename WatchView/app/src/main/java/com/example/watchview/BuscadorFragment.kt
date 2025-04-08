@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.skydoves.expandablelayout.ExpandableLayout
 
 class BuscadorFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +26,11 @@ class BuscadorFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_buscador, container, false)
 
+        val expandableLayout = view.findViewById<ExpandableLayout>(R.id.expandableLayoutFiltro)
+
+        // Crear una lista con los ExpandableLayouts
+        val expandableLayouts = listOf(expandableLayout)
+
         val db=BBDD(requireContext())
         //val recyclerView = view.findViewById<RecyclerView>(R.id.recycler)
         //recyclerView.layoutManager = LinearLayoutManager(context)
@@ -37,9 +43,16 @@ class BuscadorFragment : Fragment() {
 
         recyclerView.adapter = adaptador*/
 
-        view.findViewById<ImageButton>(R.id.botonBuscador).setOnClickListener {
-            // Regresar al fragmento anterior en la pila de retroceso
-            parentFragmentManager.popBackStack()
+        view.findViewById<ImageButton>(R.id.FlechaBuscador).setOnClickListener {
+            requireActivity().finish()
+        }
+
+        // Implementa el listener en todos los expandableLayouts y permite que estos se expandan y contraigan
+
+        for(aux in expandableLayouts){
+            aux.setOnClickListener {
+                if (aux.isExpanded) aux.collapse() else aux.expand()
+            }
         }
 
         return view

@@ -39,7 +39,7 @@ class SettingsFragment : Fragment() {
             .into(fotoUsuario)
 
         flecha.setOnClickListener(){
-            parentFragmentManager.popBackStack()
+            requireActivity().finish()
         }
 
         contenedor.setOnClickListener(){

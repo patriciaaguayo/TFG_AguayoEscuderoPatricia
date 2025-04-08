@@ -66,4 +66,10 @@ class AppActivity : AppCompatActivity() {
         intent.putExtra("fragmento",frament)
         startActivity(intent)
     }
+
+    private fun activityApp(frament:String) {
+        val intent = Intent(this, AppActivity::class.java)
+        intent.putExtra("fragmento",frament)
+        startActivity(intent)
+    }
 }
