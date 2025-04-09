@@ -5,19 +5,16 @@ import android.os.Parcelable
 
 data class Foto(
     val idFoto: Int,
-    val nombreFoto: String,
-    val imagen: ByteArray
-): Parcelable {
+    val nombreFoto: String
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
-        parcel.readString() ?: "",
-        parcel.createByteArray() ?: byteArrayOf()
+        parcel.readString() ?: ""
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(idFoto)
         parcel.writeString(nombreFoto)
-        parcel.writeByteArray(imagen)
     }
 
     override fun describeContents(): Int = 0
@@ -32,4 +29,5 @@ data class Foto(
         }
     }
 }
+
 

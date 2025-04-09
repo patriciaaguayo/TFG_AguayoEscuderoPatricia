@@ -571,4 +571,69 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         }
     }
 
+    // Función para verificar si hay géneros guardados en la base de datos
+
+    fun hayGenerosGuardados(): Boolean {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT COUNT(*) FROM Genero", null)
+        var hayDatos = false
+        if (cursor.moveToFirst()) {
+            val count = cursor.getInt(0)
+            hayDatos = count > 0
+        }
+        cursor.close()
+        return hayDatos
+    }
+
+    // Método para cambiar la foto de perfil del usuario
+
+    fun actualizarFotoPerfilUsuario(correo: String, idFoto: Int): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("idFoto", idFoto)
+        }
+
+        val filasActualizadas = db.update(
+            "Usuario",           // Nombre de la tabla
+            values,              // Valores nuevos
+            "correo = ?",        // WHERE
+            arrayOf(correo)      // Argumentos del WHERE
+        )
+
+        db.close()
+        return filasActualizadas > 0
+    }
+
+    fun listaFotos(): List<Foto> {
+        val listaFotos = mutableListOf<Foto>()
+        val db = this.readableDatabase
+
+        val query = """
+            SELECT
+                FotoPerfil.idFoto AS id,
+                FotoPerfil.nombreFoto AS nombre
+            FROM FotoPerfil;
+        """
+
+        val cursor = db.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
+
+                listaFotos.add(
+                    Foto(
+                        idFoto = id,
+                        nombreFoto = nombre,
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return listaFotos
+    }
+
+
+
 }

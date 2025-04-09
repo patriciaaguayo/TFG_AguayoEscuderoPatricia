@@ -141,6 +141,15 @@ class LoginActivity : AppCompatActivity() {
     // Métodos para cargar y obtener los géneros de la API
 
     fun fetchGenresFromApi() {
+        val bd = BBDD(this)
+
+        // Verificar si ya hay géneros guardados
+        if (bd.hayGenerosGuardados()) {
+            Log.d("GeneroInsertado", "Ya existen géneros en la base de datos. No se hace la llamada a la API.")
+            return // Salir de la función si ya hay datos
+        }
+
+        // Si no hay datos, continuar con la llamada a la API
         CoroutineScope(Dispatchers.IO).launch {
             val client = OkHttpClient()
             val apiKey = getString(R.string.api_key)
@@ -169,6 +178,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 
     fun parseAndStoreGenres(jsonResponse: String?) {
         Log.d("GeneroInsertado", "Iniciando la inserción de géneros.") // Log para verificar que la función está siendo llamada

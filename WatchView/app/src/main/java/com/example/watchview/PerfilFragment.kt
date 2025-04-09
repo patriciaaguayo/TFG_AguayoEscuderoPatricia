@@ -45,10 +45,11 @@ class PerfilFragment : Fragment() {
             val intent = Intent(requireContext(), PasswordActivity::class.java)
             startActivity(intent)
         }
-        /*contenedorCambiarFoto.setOnClickListener(){
-            val intent = Intent(requireContext(), PasswordActivity::class.java)
+
+        contenedorCambiarFoto.setOnClickListener(){
+            val intent = Intent(requireContext(), FotoPerfilActivity::class.java)
             startActivity(intent)
-        }*/
+        }
 
         flechaVolver.setOnClickListener(){
             requireActivity().onBackPressedDispatcher.onBackPressed()
