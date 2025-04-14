@@ -34,24 +34,13 @@ class GestionFotos : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_gestion_fotos, container, false)
 
-        val expandableLayout = view.findViewById<ExpandableLayout>(R.id.expandableLayout)
-        val expandableLayout2 = view.findViewById<ExpandableLayout>(R.id.expandableLayout2)
+        val expandableLayout = view.findViewById<ExpandableLayout>(R.id.expandableLayoutEliminarFoto)
 
         // Crear una lista con los ExpandableLayouts
-        val expandableLayouts = listOf(expandableLayout, expandableLayout2)
+        val expandableLayouts = listOf(expandableLayout)
 
         val flechaVolver = view.findViewById<ImageView>(R.id.FlechaVolverFotos)
-        val botonInsertar = view.findViewById<Button>(R.id.InsertarButtonFotos)
         val botonEliminar = view.findViewById<Button>(R.id.EliminarButtonFotos)
-        val botonSeleccionarImagen = view.findViewById<Button>(R.id.botonSeleccionarImagen)
-        val imagenPreview = view.findViewById<ImageView>(R.id.previewImagen)
-
-        // Seleccionar imagen del dispositivo
-        botonSeleccionarImagen.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, PICK_IMAGE_REQUEST)
-        }
 
         // Volver al menú administrador
         flechaVolver.setOnClickListener {
@@ -61,44 +50,51 @@ class GestionFotos : Fragment() {
                 .commit()
         }
 
-        // Insertar foto en la base de datos
-        botonInsertar.setOnClickListener {
-            if (selectedImageUri != null) {
-                val nombreFoto = view.findViewById<EditText>(R.id.InsertarNombreFoto).text.toString()
-
-                // Verificar si el nombre de la foto ya existe en la base de datos
-                val db = BBDD(requireContext())
-                if (db.existeNombreFoto(nombreFoto)) {
-                    Toast.makeText(requireContext(), "Ese nombre de foto ya existe", Toast.LENGTH_SHORT).show()
-                } else {
-                    // Insertar la foto en la base de datos (usando la URI de la imagen)
-                    val resultado = db.insertarFoto(nombreFoto, selectedImageUri!!)
-                    if (resultado) {
-                        Toast.makeText(requireContext(), "Foto insertada correctamente", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Error al insertar la foto", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } else {
-                Toast.makeText(requireContext(), "Por favor, selecciona una foto", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        botonEliminar.setOnClickListener { // Configurar el botón para eliminar usuario
+        botonEliminar.setOnClickListener {
             val db = BBDD(requireContext())
-            val codigo = view.findViewById<EditText>(R.id.EliminarCodigoFoto).text.toString()
+            val codigoTexto = view.findViewById<EditText>(R.id.EliminarCodigoFoto).text.toString()
 
-            if (codigo.isNotEmpty()) {
-                val eliminado = db.eliminarFoto(codigo)
-                if (eliminado) {
-                    Toast.makeText(requireContext(), "Foto eliminada correctamente", Toast.LENGTH_SHORT).show()
+            if (codigoTexto.isNotEmpty()) {
+                val id = codigoTexto.toIntOrNull()
+
+                if (id != null) {
+                    if (db.contarFotos() > 1) {
+                        val listaUsuarios = db.obtenerUsuariosConFoto(id)
+
+                        // Reasignar foto a usuarios si es necesario
+                        db.reasignarFotoAUsuarios(id, listaUsuarios)
+
+                        // Intentar eliminar la foto
+                        val eliminado = db.eliminarFoto(id.toString())
+
+                        if (eliminado) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Foto eliminada correctamente",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "No se encontró la foto",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "No se puede eliminar la única foto disponible",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 } else {
-                    Toast.makeText(requireContext(), "No se encontró la foto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Código inválido", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 Toast.makeText(requireContext(), "Por favor, ingrese un código válido", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         // Implementa el listener en todos los expandableLayouts y permite que estos se expandan y contraigan
 
@@ -111,17 +107,4 @@ class GestionFotos : Fragment() {
         return view
     }
 
-    // Manejar el resultado de la selección de imagen
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST) {
-            // Obtener la URI de la imagen seleccionada
-            selectedImageUri = data?.data
-
-            // Mostrar la imagen en el ImageView
-            val imagenPreview = view?.findViewById<ImageView>(R.id.previewImagen)
-            imagenPreview?.setImageURI(selectedImageUri)  // Muestra la imagen seleccionada en el ImageView
-        }
-    }
 }

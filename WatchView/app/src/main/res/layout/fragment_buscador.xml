@@ -81,7 +81,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:fontFamily="@font/baloo_thambi_2"
-            android:hint="tucorreo@gmail.com"
+            android:hint="Buscador..."
             android:textColorHint="@color/botonLogin"
             android:inputType="textEmailAddress"
             android:paddingStart="15dp"

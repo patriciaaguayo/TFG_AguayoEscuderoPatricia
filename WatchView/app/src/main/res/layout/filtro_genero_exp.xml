@@ -43,8 +43,15 @@
             <CheckBox android:id="@+id/checkCrimen" android:text="Crimen" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkDocumental" android:text="Documental" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkDrama" android:text="Drama" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkFamilia" android:text="Familia" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkFantasia" android:text="Fantasía" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkGuerra" android:text="Guerra" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkHistoria" android:text="Historia" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkMisterio" android:text="Misterio" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkMusica" android:text="Múscia" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkNoticias" android:text="Noticias" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkEntrevistas" android:text="Entrevistas" style="@style/CheckBoxStyle"/>
+            <CheckBox android:id="@+id/checkReality" android:text="Reality" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkRomance" android:text="Romance" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkThriller" android:text="Thriller" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkHorror" android:text="Horror" style="@style/CheckBoxStyle"/>

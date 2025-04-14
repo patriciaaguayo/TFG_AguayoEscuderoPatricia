@@ -52,18 +52,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <com.skydoves.expandablelayout.ExpandableLayout
-                android:id="@+id/expandableLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:expandable_duration="500"
-                app:expandable_animation="overshoot"
-                app:expandable_isExpanded="false"
-                app:expandable_parentLayout="@layout/insertar_fotos"
-                app:expandable_secondLayout="@layout/insertar_fotos_exp"/>
 
             <com.skydoves.expandablelayout.ExpandableLayout
-                android:id="@+id/expandableLayout2"
+                android:id="@+id/expandableLayoutEliminarFoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp"

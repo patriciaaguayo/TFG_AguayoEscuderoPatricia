@@ -33,7 +33,7 @@ class AdaptadorFotosPerfil(
         // Usamos Glide para cargar la imagen desde el ID del recurso (idFoto)
         Glide.with(holder.imagenPerfil.context)
             .load(holder.imagenPerfil.context.resources.getIdentifier(item.nombreFoto, "drawable", holder.imagenPerfil.context.packageName))
-            .transform(CenterCrop(), RoundedCorners(100))  // Recorte y bordes redondeados
+            .transform(CenterCrop(), RoundedCorners(300))  // Recorte y bordes redondeados
             .into(holder.imagenPerfil)
 
 

@@ -497,6 +497,14 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
     fun eliminarFoto(codigo: String): Boolean {
         val db = this.writableDatabase
+
+        // Verificar si la foto no contiene caracteres no válidos
+
+        if (!codigo.matches(Regex("\\d+"))) {
+            Log.e("EliminarFoto", "Código inválido: $codigo")
+            return false
+        }
+
         return try {
             val rowsDeleted = db.delete("FotoPerfil", "idFoto = ?", arrayOf(codigo))
             db.close()
@@ -634,6 +642,82 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return listaFotos
     }
 
+    // Método para contar las fotos
 
+    fun contarFotos(): Int {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT COUNT(*) FROM FotoPerfil", null)
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        db.close()
+        return count
+    }
+
+    // Métodos para obtener los usuarios que usan una foto
+
+    fun obtenerUsuariosConFoto(idFoto: Int): List<UsuarioData> {
+        val db = this.readableDatabase
+        val listaUsuarios = mutableListOf<UsuarioData>()
+
+        val cursor = db.rawQuery(
+            "SELECT correo, nombre, pass, idFoto, privilegios FROM Usuario WHERE idFoto = ?",
+            arrayOf(idFoto.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val usuario = UsuarioData(
+                    correo = cursor.getString(0),
+                    nombre = cursor.getString(1),
+                    pass = cursor.getString(2),
+                    idFoto = cursor.getInt(3),
+                    privilegios = cursor.getString(4)
+                )
+                listaUsuarios.add(usuario)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return listaUsuarios
+    }
+
+    // Método para reasignar la foto de perfil a uno o varios usuarios
+
+    fun reasignarFotoAUsuarios(idFotoEliminar: Int, usuarios: List<UsuarioData>) {
+        if (usuarios.isEmpty()) return  // No hay usuarios que actualizar
+
+        val db = this.writableDatabase
+
+        // Buscar la primera idFoto distinta de la que se quiere eliminar
+        val cursor = db.rawQuery(
+            "SELECT idFoto FROM FotoPerfil WHERE idFoto != ? ORDER BY idFoto ASC LIMIT 1",
+            arrayOf(idFotoEliminar.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            val nuevaIdFoto = cursor.getInt(0)
+
+            // Actualizar todos los usuarios que tenían la foto a eliminar
+            for (usuario in usuarios) {
+                val values = ContentValues().apply {
+                    put("idFoto", nuevaIdFoto)
+                }
+
+                db.update(
+                    "Usuario",
+                    values,
+                    "correo = ?",
+                    arrayOf(usuario.correo)
+                )
+            }
+        }
+
+        cursor.close()
+        db.close()
+    }
 
 }
