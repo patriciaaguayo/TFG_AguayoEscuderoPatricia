@@ -51,9 +51,11 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         val tablaPoster_Titulo = """
             CREATE TABLE Poster_Titulo (
-                idPoster TEXT PRIMARY KEY,
+                idPoster INTEGER PRIMARY KEY AUTOINCREMENT,
                 urlPoster TEXT NOT NULL,
-                idTitulo TEXT,
+                tipo TEXT NOT NULL CHECK (tipo IN ('vertical', 'horizontal')),
+                calidad TEXT NOT NULL,
+                idTitulo TEXT NOT NULL,
                 FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
                 );
         """
@@ -246,6 +248,11 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             VALUES ("admin@gmail.com", "Admin", "1234", "4", "admin");
         """
 
+        val insertPlataforma = """
+            INSERT INTO Plataforma (idPlataforma, nombrePlataforma, urlPlataforma)
+            VALUES ("netflix", "Netflix", "https://www.netflix.com/");
+        """
+
         db.execSQL(tablaUsuario)
         db.execSQL(tablaFotoPerfil)
         db.execSQL(tablaTitulo)
@@ -271,6 +278,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaTop10Mezclado_Plataforma)
         db.execSQL(insertFotoPerfil)
         db.execSQL(insertAdmin)
+        db.execSQL(insertPlataforma)
 
     }
 
@@ -558,8 +566,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return existe
     }
 
-    // Método para insertar los géneros
-
     // Función para insertar un género en la base de datos
     fun insertGenero(idGenero: String, nombreGenero: String) {
         try {
@@ -584,6 +590,20 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     fun hayGenerosGuardados(): Boolean {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT COUNT(*) FROM Genero", null)
+        var hayDatos = false
+        if (cursor.moveToFirst()) {
+            val count = cursor.getInt(0)
+            hayDatos = count > 0
+        }
+        cursor.close()
+        return hayDatos
+    }
+
+    // Función para verificar su hay títulos guardados en la base de datos
+
+    fun hayTitulosGuardados(): Boolean {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT COUNT(*) FROM Titulo", null)
         var hayDatos = false
         if (cursor.moveToFirst()) {
             val count = cursor.getInt(0)
@@ -718,6 +738,156 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         cursor.close()
         db.close()
+    }
+
+    // Función para insertar un titulo
+    /*
+    * val tablaTitulo ="""
+            CREATE TABLE Titulo (
+                idTitulo TEXT PRIMARY KEY,
+                nombre TEXT NOT NULL,
+                nombreOriginal TEXT,
+                descripcion TEXT,
+                fechaInicio TEXT NOT NULL,
+                fechaFin TEXT,
+                temporadas INTEGER,
+                tipo TEXT NOT NULL CHECK (tipo IN ('movie', 'series')),
+                rating INTEGER NOT NULL
+            );
+        """
+    * */
+    fun insertTitulo(
+        id: String,
+        nombre: String,
+        nombreOriginal: String?,
+        descripcion: String?,
+        fechaInicio: String,
+        fechaFin: String?,
+        temporadas: Int?,
+        tipo: String,
+        rating: Int
+    ) {
+        val db = this.writableDatabase
+
+        try {
+            val values = ContentValues().apply {
+                put("idTitulo", id)
+                put("nombre", nombre)
+                put("nombreOriginal", nombreOriginal)
+                put("descripcion", descripcion)
+                put("fechaInicio", fechaInicio)
+                put("fechaFin", fechaFin)
+                put("temporadas", temporadas)
+                put("tipo", tipo)
+                put("rating", rating)
+            }
+
+            val result = db.insertWithOnConflict("Titulo", null, values, SQLiteDatabase.CONFLICT_REPLACE)
+
+            if (result != -1L) {
+                Log.d("TituloInsertado", "Inserción exitosa para el título: $nombre")
+            } else {
+                Log.e("TituloInsertado", "Error al insertar el título: $nombre")
+            }
+        } catch (e: Exception) {
+            Log.e("TituloInsertado", "Error en insertTitulo: ${e.message}")
+        } finally {
+            db.close()
+        }
+    }
+
+    // Método para insertar un poster
+
+    fun insertPosterTitulo(idTitulo: String, tipo: String, calidad: String, url: String) {
+        val db = this.writableDatabase
+        try {
+            val values = ContentValues().apply {
+                put("idTitulo", idTitulo)
+                put("tipo", tipo) // "vertical" o "horizontal"
+                put("calidad", calidad) // "w360" o "w720"
+                put("urlPoster", url)
+            }
+
+            val result = db.insertWithOnConflict("Poster_Titulo", null, values, SQLiteDatabase.CONFLICT_IGNORE)
+            if (result != -1L) {
+                Log.d("PosterTituloInsertado", "Poster guardado: $tipo ($calidad) para $idTitulo")
+            } else {
+                Log.e("PosterTituloInsertado", "Error al insertar el poster de $idTitulo")
+            }
+        } catch (e: Exception) {
+            Log.e("PosterTituloInsertado", "Error en insertPosterTitulo: ${e.message}")
+        } finally {
+            db.close()
+        }
+    }
+
+    // Método para guardar los géneros de un titulo concreto
+
+    fun insertGeneroTitulo(idGenero: String, idTitulo: String) {
+        val db = this.writableDatabase
+        try {
+            val query = """
+            INSERT OR IGNORE INTO Genero_Titulo (idGenero, idTitulo) 
+            VALUES (?, ?)
+        """
+            val stmt = db.compileStatement(query)
+            stmt.bindString(1, idGenero)
+            stmt.bindString(2, idTitulo)
+            stmt.executeInsert()
+
+            Log.d("GeneroTituloInsertado", "Asociación guardada: Género = $idGenero, Título = $idTitulo")
+        } catch (e: Exception) {
+            Log.e("GeneroTituloInsertado", "Error en insertGeneroTitulo: ${e.message}")
+        } finally {
+            db.close()
+        }
+    }
+
+
+    // Método para guardar las plataformas de un título concreto
+
+    fun insertPlataformaTitulo(idTitulo: String, idPlataforma: String, pais: String, disponible: Boolean) {
+        val db = this.writableDatabase
+        val disponibleInt = if (disponible) 1 else 0
+        try {
+            val query = """
+            INSERT OR IGNORE INTO Plataforma_Titulo 
+            (idPlataforma, idTitulo, pais, disponible) 
+            VALUES (?, ?, ?, ?)
+        """
+            val stmt = db.compileStatement(query)
+            stmt.bindString(1, idPlataforma)
+            stmt.bindString(2, idTitulo)
+            stmt.bindString(3, pais)
+            stmt.bindLong(4, disponibleInt.toLong())
+            stmt.executeInsert()
+            Log.d("PlataformaTituloInsertado", "Asociación guardada: $idTitulo ($pais)")
+        } catch (e: Exception) {
+            Log.e("PlataformaTituloInsertado", "Error en insertPlataformaTitulo: ${e.message}")
+        }
+    }
+
+    fun checkPlataformaTituloExistente(idTitulo: String, idPlataforma: String): Boolean {
+        val db = this.readableDatabase
+        var existe = false
+        try {
+            val query = """
+            SELECT COUNT(*) FROM Plataforma_Titulo 
+            WHERE idTitulo = ? AND idPlataforma = ?
+        """
+            val cursor = db.rawQuery(query, arrayOf(idTitulo, idPlataforma))
+
+            if (cursor.moveToFirst()) {
+                // Si el resultado es mayor que 0, ya existe la relación
+                existe = cursor.getInt(0) > 0
+            }
+            cursor.close()
+        } catch (e: Exception) {
+            Log.e("PlataformaTituloCheck", "Error al comprobar si la relación existe: ${e.message}")
+        } finally {
+            db.close()
+        }
+        return existe
     }
 
 }

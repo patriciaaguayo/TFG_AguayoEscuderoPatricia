@@ -17,6 +17,15 @@ class AppActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_app)
+
+        // Cargar géneros y títulos si no están guardados
+        if(!BBDD(this).hayGenerosGuardados()){
+            ApiDataLoader.fetchGenresFromApi(this)
+        }
+        if(!BBDD(this).hayTitulosGuardados()){
+            ApiDataLoader.guardarTitulosNetflix2(this)
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.app)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
