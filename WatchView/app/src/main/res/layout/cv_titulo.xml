@@ -13,8 +13,8 @@
 
         <ImageView
             android:id="@+id/imagenTitulo"
-            android:layout_width="134dp"
-            android:layout_height="173dp"
+            android:layout_width="150dp"
+            android:layout_height="205dp"
             android:scaleType="centerCrop"
             android:src="@drawable/miercoles" />
 
@@ -30,13 +30,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/baloo_thambi_2"
-                android:text="Miercoles"
+                android:text="Miércoles"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/TipoTitulo"
+                android:id="@+id/yearTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Año: 2023"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/baloo_thambi_2"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tipoTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tipo: Serie"
@@ -49,9 +59,9 @@
                 android:id="@+id/imagenAdd"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="190dp"
-                android:layout_marginTop="20dp"
-                android:padding="0dp"
+                android:layout_marginStart="180dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="20dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/agregar" />
         </LinearLayout>

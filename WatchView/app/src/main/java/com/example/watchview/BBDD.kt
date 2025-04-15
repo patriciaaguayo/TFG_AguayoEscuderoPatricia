@@ -890,4 +890,121 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return existe
     }
 
+    // Método para obtener la lista de titulo
+
+    fun listaTitulos(): List<Titulo> {
+        val listaTitulos = mutableListOf<Titulo>()
+        val db = this.readableDatabase
+
+        val query = "SELECT * FROM Titulo"
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idTitulo = cursor.getString(cursor.getColumnIndexOrThrow("idTitulo"))
+                val nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
+                val nombreOriginal = cursor.getString(cursor.getColumnIndexOrThrow("nombreOriginal"))
+                val descripcion = cursor.getString(cursor.getColumnIndexOrThrow("descripcion"))
+                val fechaInicio = cursor.getString(cursor.getColumnIndexOrThrow("fechaInicio"))
+                val fechaFin = cursor.getString(cursor.getColumnIndexOrThrow("fechaFin"))
+                val temporadas = if (!cursor.isNull(cursor.getColumnIndexOrThrow("temporadas")))
+                    cursor.getInt(cursor.getColumnIndexOrThrow("temporadas")) else null
+                val tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))
+                val rating = cursor.getInt(cursor.getColumnIndexOrThrow("rating"))
+
+                // ---- Posters relacionados ----
+                val posters = mutableListOf<Poster>()
+                val postersCursor = db.rawQuery(
+                    "SELECT * FROM Poster_Titulo WHERE idTitulo = ?",
+                    arrayOf(idTitulo)
+                )
+                if (postersCursor.moveToFirst()) {
+                    do {
+                        posters.add(
+                            Poster(
+                                idPoster = postersCursor.getInt(postersCursor.getColumnIndexOrThrow("idPoster")),
+                                urlPoster = postersCursor.getString(postersCursor.getColumnIndexOrThrow("urlPoster")),
+                                tipo = postersCursor.getString(postersCursor.getColumnIndexOrThrow("tipo")),
+                                calidad = postersCursor.getString(postersCursor.getColumnIndexOrThrow("calidad")),
+                                idTitulo = idTitulo
+                            )
+                        )
+                    } while (postersCursor.moveToNext())
+                }
+                postersCursor.close()
+
+                // ---- Géneros relacionados ----
+                val generos = mutableListOf<Genero>()
+                val generoCursor = db.rawQuery(
+                    """
+                    SELECT g.idGenero, g.nombreGenero 
+                    FROM Genero g 
+                    INNER JOIN Genero_Titulo gt ON g.idGenero = gt.idGenero 
+                    WHERE gt.idTitulo = ?
+                """.trimIndent(), arrayOf(idTitulo)
+                )
+                if (generoCursor.moveToFirst()) {
+                    do {
+                        generos.add(
+                            Genero(
+                                idGenero = generoCursor.getString(0),
+                                nombreGenero = generoCursor.getString(1),
+                                idTitulo = idTitulo
+                            )
+                        )
+                    } while (generoCursor.moveToNext())
+                }
+                generoCursor.close()
+
+                // ---- Plataformas relacionadas ----
+                val plataformas = mutableListOf<Plataforma>()
+                val plataformaCursor = db.rawQuery(
+                    """
+                    SELECT p.idPlataforma, p.nombrePlataforma 
+                    FROM Plataforma p 
+                    INNER JOIN Plataforma_Titulo pt ON p.idPlataforma = pt.idPlataforma 
+                    WHERE pt.idTitulo = ?
+                """.trimIndent(), arrayOf(idTitulo)
+                )
+                if (plataformaCursor.moveToFirst()) {
+                    do {
+                        plataformas.add(
+                            Plataforma(
+                                idPlataforma = plataformaCursor.getString(0),
+                                nombrePlataforma = plataformaCursor.getString(1),
+                                idTitulo = idTitulo
+                            )
+                        )
+                    } while (plataformaCursor.moveToNext())
+                }
+                plataformaCursor.close()
+
+                // ---- Crear objeto Titulo ----
+                listaTitulos.add(
+                    Titulo(
+                        idTitulo = idTitulo,
+                        nombre = nombre,
+                        nombreOriginal = nombreOriginal,
+                        descripcion = descripcion,
+                        fechaInicio = fechaInicio,
+                        fechaFin = fechaFin,
+                        temporadas = temporadas,
+                        tipo = tipo,
+                        rating = rating,
+                        posters = posters,
+                        generos = generos,
+                        plataformas = plataformas
+                    )
+                )
+
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return listaTitulos
+    }
+
+
 }

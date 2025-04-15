@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondoLogin1">
+
+    <!-- Imagen de la vela -->
+    <ImageView
+        android:id="@+id/imageTitulo"
+        android:layout_width="0dp"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/fondo_register" />
+
+    <!-- Capa oscura detrás de la flecha de volver -->
+
+    <!-- Imagen para volver (botón encima de la imagen de la vela) -->
+
+    <!-- Rectángulo con bordes redondeados -->
+    <View
+        android:id="@+id/darkOverlay"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="175dp"
+        android:background="@drawable/rounded_overlay"
+        app:layout_constraintStart_toStartOf="@id/imageTitulo"
+        app:layout_constraintTop_toTopOf="@id/imageTitulo" />
+
+    <ImageButton
+        android:id="@+id/volverButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="175dp"
+        android:background="@drawable/flechavolver"
+        android:contentDescription="Volver"
+        app:layout_constraintStart_toStartOf="@id/imageTitulo"
+        app:layout_constraintTop_toTopOf="@id/imageTitulo" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardDescripcion"
+        android:layout_width="0dp"
+        android:layout_height="470dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="3dp"
+        android:backgroundTint="@color/fondoTextoLogin"
+        app:layout_constraintTop_toBottomOf="@id/imageTitulo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/fondoTextoLogin">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:id="@+id/nombreTitulo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Miércoles"
+                        android:textSize="23sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/TituloSinopsis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/baloo_thambi_2"
+                    android:text="Sinopsis"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/sinopsisTitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sinopsis del título..."
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="14dp"
+                    android:justificationMode="inter_word"
+                    android:lineSpacingExtra="3dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="left"
+                    android:layout_marginTop="30dp">
+
+                    <TextView
+                        android:id="@+id/tituloTipo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Tipo: "
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/tipo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Serie"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tituloGeneros"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/baloo_thambi_2"
+                    android:text="Géneros"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingTop="30dp"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/generosTitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Géneros del título..."
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp"
+                    android:justificationMode="inter_word"
+                    android:lineSpacingExtra="3dp" />
+
+                <TextView
+                    android:id="@+id/tituloNombreOriginal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/baloo_thambi_2"
+                    android:text="Nombre original"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingTop="30dp"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/nomnbreOriginal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre original del título..."
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp"
+                    android:justificationMode="inter_word"
+                    android:lineSpacingExtra="3dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="left"
+                    android:layout_marginTop="30dp">
+
+                    <TextView
+                        android:id="@+id/tituloFechaInicio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Año: "
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/fechaInicio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="2023 - 2025"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="left"
+                    android:layout_marginTop="30dp">
+
+                    <TextView
+                        android:id="@+id/tituloTemporadas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Temporadas: "
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/temporadas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="2"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tituloPlataforma"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/baloo_thambi_2"
+                    android:text="Plataformas"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingTop="30dp"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/plataforma"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Netflix..."
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp"
+                    android:justificationMode="inter_word"
+                    android:lineSpacingExtra="3dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="left"
+                    android:layout_marginTop="30dp">
+
+                    <TextView
+                        android:id="@+id/tituloRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="Rating: "
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="@font/baloo_thambi_2"
+                        android:text="23"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="0dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

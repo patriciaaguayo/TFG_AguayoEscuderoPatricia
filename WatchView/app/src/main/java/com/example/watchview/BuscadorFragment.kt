@@ -2,6 +2,7 @@ package com.example.watchview
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -32,16 +33,16 @@ class BuscadorFragment : Fragment() {
         val expandableLayouts = listOf(expandableLayout)
 
         val db=BBDD(requireContext())
-        //val recyclerView = view.findViewById<RecyclerView>(R.id.recycler)
-        //recyclerView.layoutManager = LinearLayoutManager(context)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerTitulos)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
-        //val listaVelas = db.listaVelas()
+        val listaTitulos = db.listaTitulos()
 
-        /*val adaptador = Adaptador(listaVelas){
-                vela->mostrarInfoVela(vela)
+        val adaptador = AdaptadorBuscador(listaTitulos){
+                titulo->mostrarInfoTitulo(titulo)
         }
 
-        recyclerView.adapter = adaptador*/
+        recyclerView.adapter = adaptador
 
         view.findViewById<ImageButton>(R.id.FlechaBuscador).setOnClickListener {
             requireActivity().finish()
@@ -58,20 +59,34 @@ class BuscadorFragment : Fragment() {
         return view
     }
 
-    // Método para mostrar la información del curso
+    // Método para mostrar la información del título
 
-    /*private fun mostrarInfoVela(vela:Vela) {
-        val fragment=InformacionVela()
+    private fun mostrarInfoTitulo(titulo: Titulo) {
+        val fragment=InformacionTitulo()
         val bundle=Bundle()
-        bundle.putParcelable("vela",vela)
+        bundle.putParcelable("titulo",titulo)
         fragment.arguments=bundle
         fragmentLoader(fragment)
     }
 
-    private fun fragmentLoader(fragment:Fragment) {
+    private fun fragmentLoader(fragment: Fragment) {
+        val activity = requireActivity()
+
+        if (activity.findViewById<View>(R.id.fragment_container_watch_view) != null) {
+            activity.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_watch_view, fragment)
+                .addToBackStack(null)
+                .commit()
+        } else {
+            Log.e("FragmentLoader", "No se encontró fragment_container en esta actividad")
+        }
+    }
+
+    private fun fragmentLoader2(fragment:Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
-    }*/
+    }
+
 }
