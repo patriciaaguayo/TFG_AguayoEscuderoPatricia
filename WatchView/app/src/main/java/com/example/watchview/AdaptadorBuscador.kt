@@ -19,9 +19,10 @@ import com.bumptech.glide.request.RequestOptions
 * */
 
 class AdaptadorBuscador (
-    private val listaTitulos: List<Titulo>,
+    titulos: List<Titulo>,
     private val onItemClick: (Titulo) -> Unit
             ): RecyclerView.Adapter<AdaptadorBuscador.ViewHolder>() {
+    private val listaTitulos = titulos.toMutableList()
 
     /*
      * Clase interna ViewHolder que se encarga de gestionar las vistas individuales
@@ -72,5 +73,12 @@ class AdaptadorBuscador (
     override fun getItemCount(): Int {
         return listaTitulos.size
     }
+
+    fun actualizarLista(nuevaLista: List<Titulo>) {
+        (listaTitulos as MutableList<Titulo>).clear()
+        listaTitulos.addAll(nuevaLista)
+        notifyDataSetChanged()
+    }
+
 
 }

@@ -65,7 +65,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <ImageView
-            android:id="@+id/LupaBuscador"
+            android:id="@+id/botonBuscador"
             android:layout_width="20dp"
             android:layout_height="70dp"
             android:layout_weight="1"
@@ -75,7 +75,7 @@
             android:src="@drawable/lupa"/>
 
         <EditText
-            android:id="@+id/registerEmail"
+            android:id="@+id/buscador"
             android:layout_width="280dp"
             android:layout_height="70dp"
             android:layout_weight="1"
@@ -114,6 +114,18 @@
                 android:id="@+id/recyclerTitulos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/mensajeNoResultados"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No se han encontrado títulos"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                android:padding="16dp"
+                />
         </LinearLayout>
     </ScrollView>
 
