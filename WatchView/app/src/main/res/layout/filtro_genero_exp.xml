@@ -62,7 +62,12 @@
         <!-- Aquí colocaremos los CheckBoxes en GridLayout -->
     </LinearLayout>
 
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="30dp">
 
     <Button
         android:id="@+id/ButtonBuscarFiltro"
@@ -70,5 +75,15 @@
         android:layout_height="wrap_content"
         android:text="Buscar"
         android:backgroundTint="@color/botonLogin" />
+
+    <Button
+        android:id="@+id/botonLimpiarFiltros"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:backgroundTint="@color/botonLogin"
+        android:text="Limpiar Filtros" />
+
+    </LinearLayout>
 
 </LinearLayout>

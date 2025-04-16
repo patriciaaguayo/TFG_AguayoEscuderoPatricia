@@ -12,10 +12,10 @@
         android:background="@color/fondoTextoLogin">
 
         <ImageView
-            android:id="@+id/imagenTitulo"
+            android:id="@+id/imagenTituloLista"
             android:layout_width="150dp"
             android:layout_height="205dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:src="@drawable/miercoles" />
 
         <LinearLayout
@@ -25,7 +25,7 @@
             android:paddingStart="25dp">
 
             <TextView
-                android:id="@+id/nombreTitulo"
+                android:id="@+id/nombreTituloLista"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -36,7 +36,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/yearTitulo"
+                android:id="@+id/yearTituloLista"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Año: 2023"
@@ -46,7 +46,7 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/tipoTitulo"
+                android:id="@+id/tipoTituloLista"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tipo: Serie"
@@ -56,14 +56,14 @@
                 android:textSize="20sp" />
 
             <ImageView
-                android:id="@+id/imagenAdd"
+                android:id="@+id/imagenQuitarLista"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="180dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="20dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/agregar" />
+                android:src="@drawable/quitar" />
         </LinearLayout>
 
 

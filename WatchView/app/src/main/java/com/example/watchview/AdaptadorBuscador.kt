@@ -18,22 +18,19 @@ import com.bumptech.glide.request.RequestOptions
 * recibe tambien una funcion lambda que se ejecutará al darle click a un titulo
 * */
 
-class AdaptadorBuscador (
+class AdaptadorBuscador(
     titulos: List<Titulo>,
     private val onItemClick: (Titulo) -> Unit
-            ): RecyclerView.Adapter<AdaptadorBuscador.ViewHolder>() {
+) : RecyclerView.Adapter<AdaptadorBuscador.ViewHolder>() {
     private val listaTitulos = titulos.toMutableList()
 
-    /*
-     * Clase interna ViewHolder que se encarga de gestionar las vistas individuales
-     * de cada elemento del RecyclerView.
-     * */
-
+    // Clase interna ViewHolder que se encarga de gestionar las vistas individuales de cada elemento
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombre: TextView = itemView.findViewById(R.id.nombreTitulo)
         val year: TextView = itemView.findViewById(R.id.yearTitulo)
         val tipo: TextView = itemView.findViewById(R.id.tipoTitulo)
         val imagen: ImageView = itemView.findViewById(R.id.imagenTitulo)
+        val imagenAdd: ImageView = itemView.findViewById(R.id.imagenAdd)  // Agregar la referencia a la imagen
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -45,28 +42,59 @@ class AdaptadorBuscador (
         val item = listaTitulos[position]
         holder.nombre.text = item.nombre
         holder.year.text = item.fechaInicio
-        holder.tipo.text = item.tipo
+        holder.tipo.text = if (item.tipo == "series") "Serie" else "Película"
 
-        // Filtra los pósters de tipo "vertical" y toma el último (mayor calidad)
+        // Cargar la imagen de póster si existe
         val posterVertical = item.posters
             .filter { it.tipo == "vertical" }
-            .lastOrNull()  // último de la lista
+            .lastOrNull() // último de la lista
 
         if (posterVertical != null) {
             Glide.with(holder.imagen.context)
                 .load(posterVertical.urlPoster)
-                .apply(
-                    RequestOptions()
-                        .transform(CenterCrop())
+                .apply(RequestOptions().centerCrop()) // caso normal: se recorta
+                .thumbnail(
+                    Glide.with(holder.imagen.context)
+                        .load(posterVertical.urlPoster)
+                        .apply(RequestOptions().fitCenter()) // fallback visual
                 )
                 .into(holder.imagen)
+
         } else {
-            holder.imagen.setImageResource(R.drawable.miercoles) // Por si no hay póster
+            holder.imagen.setImageResource(R.drawable.miercoles) // Default image if no poster
         }
 
-
+        // Acción al hacer clic en el título
         holder.itemView.setOnClickListener {
             onItemClick(item)
+        }
+
+        // Revisar si el título ya está en la base de datos
+        val db = BBDD(holder.itemView.context)
+        val usuarioCorreo = Usuario.correo  // Asume que tienes el correo del usuario almacenado
+        val idTitulo = item.idTitulo  // El ID del título
+
+        // Revisar si el título ya está agregado
+        val isAdded = db.verificarTituloEnLista(usuarioCorreo, idTitulo)
+
+        // Configurar el ícono dependiendo de si el título está agregado
+        if (isAdded) {
+            holder.imagenAdd.setImageResource(R.drawable.quitar)
+        } else {
+            holder.imagenAdd.setImageResource(R.drawable.agregar)
+        }
+
+        // Acción para agregar o quitar el título de la base de datos
+        holder.imagenAdd.setOnClickListener {
+            if (isAdded) {
+                // Eliminar título de la base de datos y cambiar imagen a agregar
+                db.eliminarTituloDeLista(usuarioCorreo, idTitulo)
+                holder.imagenAdd.setImageResource(R.drawable.agregar)
+            } else {
+                // Agregar título a la base de datos y cambiar imagen a quitar
+                db.agregarTituloALista(usuarioCorreo, idTitulo)
+                holder.imagenAdd.setImageResource(R.drawable.quitar)
+            }
         }
     }
 
@@ -79,6 +107,4 @@ class AdaptadorBuscador (
         listaTitulos.addAll(nuevaLista)
         notifyDataSetChanged()
     }
-
-
 }

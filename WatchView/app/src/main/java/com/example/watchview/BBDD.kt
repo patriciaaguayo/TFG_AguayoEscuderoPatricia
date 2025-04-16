@@ -1006,5 +1006,174 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return listaTitulos
     }
 
+    // Insertar título en la tabla Usuario_Titulo
+
+    fun agregarTituloALista(correo: String, idTitulo: String): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("correo", correo)
+            put("idTitulo", idTitulo)
+        }
+        return try {
+            val rowId = db.insertWithOnConflict("Usuario_Titulo", null, values, SQLiteDatabase.CONFLICT_IGNORE)
+            rowId != -1L
+        } catch (e: SQLiteConstraintException) {
+            false
+        } finally {
+            db.close()
+        }
+    }
+
+    // Eliminar título de la tabla Usuario_Titulo
+
+    fun eliminarTituloDeLista(correo: String, idTitulo: String): Boolean {
+        val db = this.writableDatabase
+        return try {
+            val rowsDeleted = db.delete("Usuario_Titulo", "correo = ? AND idTitulo = ?", arrayOf(correo, idTitulo))
+            rowsDeleted > 0
+        } finally {
+            db.close()
+        }
+    }
+
+    // Obtener los títulos guardados en la base de datos por un usuario
+
+    fun obtenerTitulosGuardados(correo: String): List<Titulo> {
+        val db = this.readableDatabase
+        val listaTitulos = mutableListOf<Titulo>()
+
+        // Obtener los títulos guardados por el usuario
+        val query = """
+        SELECT T.idTitulo, T.nombre, T.nombreOriginal, T.descripcion, T.fechaInicio, T.fechaFin, 
+               T.temporadas, T.tipo, T.rating 
+        FROM Titulo T
+        INNER JOIN Usuario_Titulo UT ON T.idTitulo = UT.idTitulo
+        WHERE UT.correo = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(correo))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idTitulo = cursor.getString(cursor.getColumnIndexOrThrow("idTitulo"))
+                val nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
+                val nombreOriginal = cursor.getString(cursor.getColumnIndexOrThrow("nombreOriginal"))
+                val descripcion = cursor.getString(cursor.getColumnIndexOrThrow("descripcion"))
+                val fechaInicio = cursor.getString(cursor.getColumnIndexOrThrow("fechaInicio"))
+                val fechaFin = cursor.getString(cursor.getColumnIndexOrThrow("fechaFin"))
+                val temporadas = if (!cursor.isNull(cursor.getColumnIndexOrThrow("temporadas")))
+                    cursor.getInt(cursor.getColumnIndexOrThrow("temporadas")) else null
+                val tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))
+                val rating = cursor.getInt(cursor.getColumnIndexOrThrow("rating"))
+
+                // ---- Posters relacionados ----
+                val posters = mutableListOf<Poster>()
+                val postersCursor = db.rawQuery(
+                    "SELECT * FROM Poster_Titulo WHERE idTitulo = ?",
+                    arrayOf(idTitulo)
+                )
+                if (postersCursor.moveToFirst()) {
+                    do {
+                        posters.add(
+                            Poster(
+                                idPoster = postersCursor.getInt(postersCursor.getColumnIndexOrThrow("idPoster")),
+                                urlPoster = postersCursor.getString(postersCursor.getColumnIndexOrThrow("urlPoster")),
+                                tipo = postersCursor.getString(postersCursor.getColumnIndexOrThrow("tipo")),
+                                calidad = postersCursor.getString(postersCursor.getColumnIndexOrThrow("calidad")),
+                                idTitulo = idTitulo
+                            )
+                        )
+                    } while (postersCursor.moveToNext())
+                }
+                postersCursor.close()
+
+                // ---- Géneros relacionados ----
+                val generos = mutableListOf<Genero>()
+                val generoCursor = db.rawQuery(
+                    """
+                SELECT g.idGenero, g.nombreGenero 
+                FROM Genero g 
+                INNER JOIN Genero_Titulo gt ON g.idGenero = gt.idGenero 
+                WHERE gt.idTitulo = ?
+            """.trimIndent(), arrayOf(idTitulo)
+                )
+                if (generoCursor.moveToFirst()) {
+                    do {
+                        generos.add(
+                            Genero(
+                                idGenero = generoCursor.getString(0),
+                                nombreGenero = generoCursor.getString(1),
+                                idTitulo = idTitulo
+                            )
+                        )
+                    } while (generoCursor.moveToNext())
+                }
+                generoCursor.close()
+
+                // ---- Plataformas relacionadas ----
+                val plataformas = mutableListOf<Plataforma>()
+                val plataformaCursor = db.rawQuery(
+                    """
+                SELECT p.idPlataforma, p.nombrePlataforma 
+                FROM Plataforma p 
+                INNER JOIN Plataforma_Titulo pt ON p.idPlataforma = pt.idPlataforma 
+                WHERE pt.idTitulo = ?
+            """.trimIndent(), arrayOf(idTitulo)
+                )
+                if (plataformaCursor.moveToFirst()) {
+                    do {
+                        plataformas.add(
+                            Plataforma(
+                                idPlataforma = plataformaCursor.getString(0),
+                                nombrePlataforma = plataformaCursor.getString(1),
+                                idTitulo = idTitulo
+                            )
+                        )
+                    } while (plataformaCursor.moveToNext())
+                }
+                plataformaCursor.close()
+
+                // ---- Crear objeto Titulo ----
+                listaTitulos.add(
+                    Titulo(
+                        idTitulo = idTitulo,
+                        nombre = nombre,
+                        nombreOriginal = nombreOriginal,
+                        descripcion = descripcion,
+                        fechaInicio = fechaInicio,
+                        fechaFin = fechaFin,
+                        temporadas = temporadas,
+                        tipo = tipo,
+                        rating = rating,
+                        posters = posters,
+                        generos = generos,
+                        plataformas = plataformas
+                    )
+                )
+
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return listaTitulos
+    }
+
+
+
+    fun verificarTituloEnLista(correo: String, idTitulo: String): Boolean {
+        val db = this.readableDatabase
+        val query = """
+        SELECT 1 
+        FROM Usuario_Titulo 
+        WHERE correo = ? AND idTitulo = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(correo, idTitulo))
+        val existe = cursor.count > 0
+        cursor.close()
+        db.close()
+
+        return existe
+    }
 
 }
