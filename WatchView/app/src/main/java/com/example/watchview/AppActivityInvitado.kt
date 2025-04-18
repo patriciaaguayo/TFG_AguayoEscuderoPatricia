@@ -16,12 +16,12 @@ class AppActivityInvitado : AppCompatActivity() {
         setContentView(R.layout.activity_app_invitado)
 
         // Cargar géneros y títulos si no están guardados
-        /*if(!BBDD(this).hayGenerosGuardados()){
+        if(!BBDD(this).hayGenerosGuardados()){
             ApiDataLoader.fetchGenresFromApi(this)
         }
         if(!BBDD(this).hayTitulosGuardados()){
             ApiDataLoader.guardarTitulosNetflix2(this)
-        }*/
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.app)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

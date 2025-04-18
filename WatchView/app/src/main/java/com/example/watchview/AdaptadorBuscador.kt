@@ -47,7 +47,7 @@ class AdaptadorBuscador(
         // Cargar la imagen de póster si existe
         val posterVertical = item.posters
             .filter { it.tipo == "vertical" }
-            .lastOrNull() // último de la lista
+            .first() // primero de la lista
 
         if (posterVertical != null) {
             Glide.with(holder.imagen.context)
@@ -75,7 +75,7 @@ class AdaptadorBuscador(
         val idTitulo = item.idTitulo  // El ID del título
 
         // Revisar si el título ya está agregado
-        val isAdded = db.verificarTituloEnLista(usuarioCorreo, idTitulo)
+        var isAdded = db.verificarTituloEnLista(usuarioCorreo, idTitulo)
 
         // Configurar el ícono dependiendo de si el título está agregado
         if (isAdded) {
@@ -89,12 +89,17 @@ class AdaptadorBuscador(
             if (isAdded) {
                 // Eliminar título de la base de datos y cambiar imagen a agregar
                 db.eliminarTituloDeLista(usuarioCorreo, idTitulo)
+                isAdded = false // Cambiar el estado local
                 holder.imagenAdd.setImageResource(R.drawable.agregar)
             } else {
                 // Agregar título a la base de datos y cambiar imagen a quitar
                 db.agregarTituloALista(usuarioCorreo, idTitulo)
+                isAdded = true // Cambiar el estado local
                 holder.imagenAdd.setImageResource(R.drawable.quitar)
             }
+
+            // Notificar que el estado del item ha cambiado
+            notifyItemChanged(position)
         }
     }
 

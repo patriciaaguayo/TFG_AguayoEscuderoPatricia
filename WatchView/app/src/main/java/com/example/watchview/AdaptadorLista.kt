@@ -51,7 +51,7 @@ class AdaptadorLista(
         // Cargar la imagen de póster si existe
         val posterVertical = item.posters
             .filter { it.tipo == "vertical" }
-            .lastOrNull() // último de la lista
+            .first() // primero de la lista
 
         if (posterVertical != null) {
             Glide.with(holder.imagen.context)
