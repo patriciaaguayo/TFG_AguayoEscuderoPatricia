@@ -45,8 +45,8 @@
 
         <ImageButton
             android:id="@+id/botonInicioAdmin"
-            android:layout_width="40dp"
-            android:layout_height="45dp"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:background="@drawable/casa"
@@ -54,8 +54,8 @@
 
         <ImageButton
             android:id="@+id/botonAdmin"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:background="@drawable/admin"
@@ -63,8 +63,8 @@
 
         <ImageButton
             android:id="@+id/botonAjustesAdmin"
-            android:layout_width="50dp"
-            android:layout_height="45dp"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:contentDescription="settings"
@@ -72,8 +72,8 @@
 
         <ImageButton
             android:id="@+id/botonListaAdmin"
-            android:layout_width="43dp"
-            android:layout_height="45dp"
+            android:layout_width="23dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:contentDescription="lista"
@@ -81,8 +81,8 @@
 
         <ImageButton
             android:id="@+id/botonBuscadorAdmin"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:contentDescription="buscador"
             android:background="@drawable/buscador" />

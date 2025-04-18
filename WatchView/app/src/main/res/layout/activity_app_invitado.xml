@@ -45,8 +45,8 @@
 
         <ImageButton
             android:id="@+id/botonInicioInvitado"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_marginRight="40dp"
             android:background="@drawable/casa"
@@ -54,8 +54,8 @@
 
         <ImageButton
             android:id="@+id/botonAjustesInvitado"
-            android:layout_width="50dp"
-            android:layout_height="45dp"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_marginRight="40dp"
             android:contentDescription="settings"
@@ -63,8 +63,8 @@
 
         <ImageButton
             android:id="@+id/botonListaInvitado"
-            android:layout_width="43dp"
-            android:layout_height="45dp"
+            android:layout_width="23dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_marginRight="40dp"
             android:contentDescription="lista"
@@ -72,8 +72,8 @@
 
         <ImageButton
             android:id="@+id/botonBuscadorInvitado"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:contentDescription="buscador"
             android:background="@drawable/buscador" />
