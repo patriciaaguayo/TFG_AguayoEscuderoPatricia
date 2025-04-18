@@ -5,8 +5,6 @@ expandablelayout = "1.0.7"
 glide = "4.15.1"
 kotlin = "1.9.0"
 coreKtx = "1.10.1"
-junit = "4.13.2"
-junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
 material = "1.10.0"
@@ -22,6 +20,10 @@ retrofit = "2.9.0"
 retrofitGson = "2.9.0"
 okHttpLoggingInterceptor = "4.9.3"
 gson = "2.8.8"
+junitJupiter = "5.8.1"
+
+mockitoCore = "5.11.0"
+mockitoInline = "5.2.0"
 
 [libraries]
 androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
@@ -31,8 +33,6 @@ androidx-work-runtime-ktx-v2100 = { module = "androidx.work:work-runtime-ktx", v
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 expandablelayout = { module = "com.github.skydoves:expandablelayout", version.ref = "expandablelayout" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -46,6 +46,10 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version = "2.9
 retrofitGson = { group = "com.squareup.retrofit2", name = "converter-gson", version = "2.9.0" }
 okHttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version = "4.9.3" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockitoInline" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

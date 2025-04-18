@@ -1,8 +1,8 @@
 package com.example.watchview
-
-import org.junit.Test
-
+/*
 import org.junit.Assert.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -14,4 +14,4 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
-}
+}*/

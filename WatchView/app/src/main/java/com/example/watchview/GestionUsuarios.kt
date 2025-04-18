@@ -1,6 +1,7 @@
 package com.example.watchview
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import androidx.fragment.app.Fragment
@@ -63,6 +64,23 @@ class GestionUsuarios : Fragment() {
                 return@setOnClickListener
             }
 
+            val bbdd = BBDD(requireContext())
+
+            val usuarioExistente = bbdd.encontrarUsuario(nombre)
+            val correoExistente = bbdd.encontrarUsuario(correo)
+
+            if (usuarioExistente != null || correoExistente != null) {
+                Toast.makeText(requireContext(), "El nombre de usuario o el correo ya están registrados.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!empiezaConMayuscula(nombre)) {
+                Toast.makeText(requireContext(), "El nombre de usuario debe empezar por mayúscula", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!validarContrasena(requireContext(), pass)) return@setOnClickListener
+
             val resultado = db.insertarUsuario(correo, nombre, pass, "usuario")
             when (resultado) {
                 0 -> Toast.makeText(requireContext(), "Usuario insertado correctamente", Toast.LENGTH_SHORT).show()
@@ -81,6 +99,7 @@ class GestionUsuarios : Fragment() {
             if (correo.isNotEmpty()) {
 
                 // Validar el formato del correo
+
                 if (!verificarCorreo(correo)) {
                     Toast.makeText(requireContext(), "El correo no tiene un formato válido", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
@@ -100,21 +119,24 @@ class GestionUsuarios : Fragment() {
 
 
         // Configurar el botón para modificar usuario
+
         botonModificar.setOnClickListener {
             val db = BBDD(requireContext())
             val correo = view.findViewById<EditText>(R.id.ModificarCorreoUsuario).text.toString()
-            val nombre = view.findViewById<EditText>(R.id.ModificarNombreUsuario).text.toString()
             val pass = view.findViewById<EditText>(R.id.ModificarPasswordUsuario).text.toString()
 
             if (correo.isNotEmpty()) {
 
                 // Validar el formato del correo
+
                 if (!verificarCorreo(correo)) {
                     Toast.makeText(requireContext(), "El correo no tiene un formato válido", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                val modificado = db.modificarUsuario(correo, nombre, pass)
+                if (!validarContrasena(requireContext(), pass)) return@setOnClickListener
+
+                val modificado = db.modificarUsuario(correo, pass)
 
                 if (modificado) {
                     Toast.makeText(requireContext(), "Usuario modificado correctamente", Toast.LENGTH_SHORT).show()
@@ -137,7 +159,36 @@ class GestionUsuarios : Fragment() {
     }
 
     // Método para verificar si un correo tiene el formato adecuado
+
     fun verificarCorreo(correo: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(correo).matches()
     }
+
+    // Método para verificar si un texto empieza por mayúscula
+
+    fun empiezaConMayuscula(texto: String): Boolean {
+        return texto.isNotEmpty() && texto.first().isUpperCase()
+    }
+
+    fun validarContrasena(context: Context, pass: String): Boolean {
+        if (pass.length < 6) {
+            Toast.makeText(context, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (!pass.first().isUpperCase()) {
+            Toast.makeText(context, "La contraseña debe empezar por mayúscula", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{6,}$")
+        if (!regex.containsMatchIn(pass)) {
+            Toast.makeText(context, "La contraseña debe tener mayúscula, minúscula, número y símbolo", Toast.LENGTH_LONG).show()
+            return false
+        }
+
+        return true
+    }
+
+
 }

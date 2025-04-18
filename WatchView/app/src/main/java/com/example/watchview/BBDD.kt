@@ -245,7 +245,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         val insertAdmin = """
             INSERT INTO Usuario (correo, nombre, pass, idFoto, privilegios)
-            VALUES ("admin@gmail.com", "Admin", "1234", "4", "admin");
+            VALUES ("admin@gmail.com", "Admin", "Admin1@", "4", "admin");
         """
 
         val insertPlataforma = """
@@ -322,28 +322,37 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
      *  1: Correo duplicado en bbdd
      *  2: Nombre duplicado en bbdd
      * */
-    fun insertarUsuario(correo:String, nombre:String, pass:String, privilegios:String?):Int{
+    fun insertarUsuario(correo: String, nombre: String, pass: String, privilegios: String?): Int {
+        val db = this.writableDatabase
 
-        val db=this.writableDatabase
-        val values= ContentValues().apply {
-            put("correo",correo)
-            put("nombre",nombre)
-            put("pass",pass)
-            put("privilegios",privilegios)
-            put("idFoto", 1)
+        // Buscar la primera foto de perfil disponible (por menor idFoto)
+        var idFotoPerfil = 1 // Valor por defecto por si no se encuentra ninguno
+        val cursor = db.rawQuery("SELECT idFoto FROM FotoPerfil ORDER BY idFoto ASC LIMIT 1", null)
+        if (cursor.moveToFirst()) {
+            idFotoPerfil = cursor.getInt(0)
         }
-        try{
-            db.insertOrThrow("Usuario",null,values)
-        }catch (e:SQLiteConstraintException){
+        cursor.close()
 
-            if(e.message?.contains("UNIQUE constraint failed: Usuario.correo")==true) return 1
-            if(e.message?.contains("UNIQUE constraint failed: Usuario.nombre")==true) return 2
+        val values = ContentValues().apply {
+            put("correo", correo)
+            put("nombre", nombre)
+            put("pass", pass)
+            put("privilegios", privilegios)
+            put("idFoto", idFotoPerfil)
+        }
 
-        }finally{
+        return try {
+            db.insertOrThrow("Usuario", null, values)
+            0 // Inserción correcta
+        } catch (e: SQLiteConstraintException) {
+            if (e.message?.contains("UNIQUE constraint failed: Usuario.correo") == true) return 1
+            if (e.message?.contains("UNIQUE constraint failed: Usuario.nombre") == true) return 2
+            else return -1
+        } finally {
             db.close()
         }
-        return 0
     }
+
     /**
      * Busca un usuario por su nombre o correo.
      * Devuelve el nombre encontrado en BBDD, si no se encuentra, devolverá null.
@@ -401,19 +410,19 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
     // Método para poder modificar un usuario
 
-    fun modificarUsuario(correo: String, nombre: String, pass: String): Boolean {
+    fun modificarUsuario(correo: String, nuevaPass: String): Boolean {
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put("nombre", nombre)
-            put("pass", pass)
+            put("pass", nuevaPass)
         }
+
         return try {
             val rowsUpdated = db.update("Usuario", values, "correo = ?", arrayOf(correo))
             db.close()
-            rowsUpdated > 0 // Devuelve true si se modificó al menos un usuario
+            rowsUpdated > 0 // Devuelve true si se modificó al menos una fila
         } catch (e: Exception) {
             e.printStackTrace()
-            false // En caso de error, devuelve false
+            false
         }
     }
 

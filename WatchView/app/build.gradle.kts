@@ -35,6 +35,10 @@ android {
     }
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -42,8 +46,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation (libs.expandablelayout)
@@ -67,4 +69,12 @@ dependencies {
 
     // Gson
     implementation(libs.gson)
+
+    // Mockito
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+
+    // Para pruebas unitarias con JUnit 5
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.8.1")
 }

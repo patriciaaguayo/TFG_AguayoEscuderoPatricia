@@ -1,6 +1,7 @@
 package com.example.watchview
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -38,10 +39,8 @@ class PasswordActivity : AppCompatActivity() {
             val pass = findViewById<EditText>(R.id.passwordContrasenia).text.toString()
             val repPass = findViewById<EditText>(R.id.passwordRepetirContrasenia).text.toString()
 
-            if(pass != repPass){
-                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            if (!validarContrasenas(this, pass, repPass)) return@setOnClickListener
+
             val bbdd=BBDD(this);
 
             if(bbdd.actualizarContrasena(this, Usuario.correo, pass)){
@@ -49,5 +48,33 @@ class PasswordActivity : AppCompatActivity() {
             }
         }
     }
+
+    // Método para validar la contraseña
+
+    fun validarContrasenas(context: Context, pass: String, repPass: String): Boolean {
+        if (pass != repPass) {
+            Toast.makeText(context, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (pass.length < 6) {
+            Toast.makeText(context, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (!pass.first().isUpperCase()) {
+            Toast.makeText(context, "La contraseña debe empezar por mayúscula", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{6,}$")
+        if (!regex.containsMatchIn(pass)) {
+            Toast.makeText(context, "La contraseña debe contener al menos una minúscula, una mayúscula, un número y un carácter especial", Toast.LENGTH_LONG).show()
+            return false
+        }
+
+        return true
+    }
+
 
 }
