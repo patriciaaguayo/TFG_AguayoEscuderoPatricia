@@ -15,14 +15,14 @@
         android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingBottom="20dp">
+        android:paddingBottom="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Selecciona género(s):"
             android:textColor="@color/white"
-            android:textSize="16dp"
+            android:textSize="14dp"
             android:layout_marginBottom="10dp"/>
 
         <GridLayout
@@ -33,7 +33,7 @@
             android:alignmentMode="alignMargins"
             android:columnOrderPreserved="false"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="0dp">
 
             <CheckBox android:id="@+id/checkAccion" android:text="Acción" style="@style/CheckBoxStyle"/>
             <CheckBox android:id="@+id/checkAnimacion" android:text="Animación" style="@style/CheckBoxStyle"/>
