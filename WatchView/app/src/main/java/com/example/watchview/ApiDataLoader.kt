@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import kotlinx.coroutines.*
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -407,6 +408,212 @@ object ApiDataLoader {
         }
 
         return Triple(nextCursor, hasMore, titulosGuardados)
+    }
+
+    // Métodos para buscar y guardar títulos por nombre
+
+    fun guardarTitulosPorNombreSeries(context: Context, listaTitulos: List<String>) {
+        val bd = BBDD(context)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val client = OkHttpClient()
+            val apiKey = context.getString(R.string.api_key)
+
+            for (titulo in listaTitulos) {
+                try {
+                    val url = HttpUrl.Builder()
+                        .scheme("https")
+                        .host("streaming-availability.p.rapidapi.com")
+                        .addPathSegments("shows/search/title")
+                        .addQueryParameter("country", "es")
+                        .addQueryParameter("title", titulo)
+                        .addQueryParameter("series_granularity", "show")
+                        .addQueryParameter("show_type", "series")
+                        .addQueryParameter("output_language", "es")
+                        .build()
+
+                    val request = Request.Builder()
+                        .url(url)
+                        .get()
+                        .addHeader("x-rapidapi-host", "streaming-availability.p.rapidapi.com")
+                        .addHeader("x-rapidapi-key", apiKey)
+                        .build()
+
+                    val response = client.newCall(request).execute()
+                    if (response.isSuccessful) {
+                        val json = response.body?.string()
+                        leerJSONTituloUnico(context, json)
+                    } else {
+                        Log.e("BusquedaTitulo", "Fallo al buscar: $titulo")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Búsqueda y guardado de títulos completado", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun guardarTitulosPorNombrePeliculas(context: Context, listaTitulos: List<String>) {
+        val bd = BBDD(context)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val client = OkHttpClient()
+            val apiKey = context.getString(R.string.api_key)
+
+            for (titulo in listaTitulos) {
+                try {
+                    val url = HttpUrl.Builder()
+                        .scheme("https")
+                        .host("streaming-availability.p.rapidapi.com")
+                        .addPathSegments("shows/search/title")
+                        .addQueryParameter("country", "es")
+                        .addQueryParameter("title", titulo)
+                        .addQueryParameter("show_type", "movie")
+                        .addQueryParameter("output_language", "es")
+                        .build()
+
+                    val request = Request.Builder()
+                        .url(url)
+                        .get()
+                        .addHeader("x-rapidapi-host", "streaming-availability.p.rapidapi.com")
+                        .addHeader("x-rapidapi-key", apiKey)
+                        .build()
+
+                    val response = client.newCall(request).execute()
+                    if (response.isSuccessful) {
+                        val json = response.body?.string()
+                        leerJSONTituloUnico(context, json)
+                    } else {
+                        Log.e("BusquedaTitulo", "Fallo al buscar: $titulo")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Búsqueda y guardado de títulos completado", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun leerJSONTituloUnico(context: Context, jsonResponse: String?): Boolean {
+        val bd = BBDD(context)
+        var insertadoConExito = false
+
+        try {
+            if (jsonResponse != null) {
+                val showsArray = JSONArray(jsonResponse)
+                val show = showsArray.getJSONObject(0)
+
+                val idTitulo = show.optString("id")
+                val tipo = show.optString("showType", "movie")
+                val nombre = show.optString("title")
+                val nombreOriginal = show.optString("originalTitle", nombre)
+                val descripcion = show.optString("overview")
+                val rating = show.optInt("rating", 0)
+
+                val fechaInicio = if (tipo == "series") {
+                    show.optInt("firstAirYear", 0).toString()
+                } else {
+                    show.optInt("releaseYear", 0).toString()
+                }
+
+                val fechaFin = if (tipo == "series") {
+                    show.optInt("lastAirYear", 0).takeIf { it != 0 }?.toString()
+                } else null
+
+                val temporadas = if (tipo == "series") {
+                    show.optInt("seasonCount", 0).takeIf { it > 0 }
+                } else null
+
+                bd.insertTitulo(
+                    id = idTitulo,
+                    nombre = nombre,
+                    nombreOriginal = nombreOriginal,
+                    descripcion = descripcion,
+                    fechaInicio = fechaInicio,
+                    fechaFin = fechaFin,
+                    temporadas = temporadas,
+                    tipo = tipo,
+                    rating = rating
+                )
+
+                val genres = show.optJSONArray("genres")
+                genres?.let {
+                    for (j in 0 until it.length()) {
+                        val genre = it.getJSONObject(j)
+                        val idGenero = genre.optString("id")
+                        bd.insertGeneroTitulo(idGenero, idTitulo)
+                    }
+                }
+
+                val imageSet = show.optJSONObject("imageSet")
+                imageSet?.let {
+                    val vertical = it.optJSONObject("verticalPoster")
+                    val horizontal = it.optJSONObject("horizontalPoster")
+
+                    vertical?.let { v ->
+                        listOf("w360", "w720").forEach { calidad ->
+                            val url = v.optString(calidad, null)
+                            if (!url.isNullOrEmpty()) {
+                                bd.insertPosterTitulo(idTitulo, "vertical", calidad, url)
+                            }
+                        }
+                    }
+
+                    horizontal?.let { h ->
+                        listOf("w360", "w720").forEach { calidad ->
+                            val url = h.optString(calidad, null)
+                            if (!url.isNullOrEmpty()) {
+                                bd.insertPosterTitulo(idTitulo, "horizontal", calidad, url)
+                            }
+                        }
+                    }
+                }
+
+                val streamingOptions = show.optJSONObject("streamingOptions")
+                val opcionesEspaña = streamingOptions?.optJSONArray("es")
+                opcionesEspaña?.let {
+                    for (k in 0 until it.length()) {
+                        val plataforma = it.getJSONObject(k)
+                        val service = plataforma.optJSONObject("service")
+                        val idPlataforma = service?.optString("id") ?: continue
+
+                        if (idPlataforma != "netflix") continue
+
+                        val disponible = plataforma.optBoolean("available", false)
+                        val existe = bd.checkPlataformaTituloExistente(idTitulo, idPlataforma)
+
+                        if (!existe) {
+                            bd.insertPlataformaTitulo(
+                                idTitulo = idTitulo,
+                                idPlataforma = idPlataforma,
+                                pais = "es",
+                                disponible = disponible
+                            )
+                            Log.d("PlataformaTitulo", "Relación insertada: $idTitulo ↔ $idPlataforma")
+                        } else {
+                            Log.d("PlataformaTitulo", "La relación ya existe: $idTitulo ↔ $idPlataforma")
+                        }
+                    }
+                }
+
+                Log.d("TituloInsertado", "Título procesado correctamente: $nombre")
+                insertadoConExito = true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            CoroutineScope(Dispatchers.Main).launch {
+                Toast.makeText(context, "Error al procesar el título", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        return insertadoConExito
     }
 
 

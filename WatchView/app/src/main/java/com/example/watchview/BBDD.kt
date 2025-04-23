@@ -253,6 +253,174 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             VALUES ("netflix", "Netflix", "https://www.netflix.com/");
         """
 
+        val insertTitulosTop10Series = """
+            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, fechaFin, temporadas, tipo, rating)
+            VALUES 
+
+            ("17340436", "El jardinero", "El jardinero", "Aunque aparenta ser un hábil jardinero en Pontevedra, Elmer es en realidad un sicario a las órdenes de su madre... hasta que se enamora de su víctima y lo pone todo en peligro.", "2025", "2025", 1, "series", 50), 
+            
+            ("15415106", "La cúpula de cristal", "Glaskupan", "Léonie Vincent interpreta a una criminóloga que se alía con su padre adoptivo, un antiguo jefe de policía, para investigar la desaparición de una niña.", "2025", "2025", 1, "series", 50),
+             
+             ("15794504", "Nueva vida en Ransom Canyon", "Ransom Canyon", "Un ganadero viudo empieza a sentir algo por la mejor amiga de su difunta esposa. Pero ¿conseguirá proteger lo que más le importa de un rival que amenaza con quitárselo todo?","2025", "2025", 1, "series", 50),
+             
+             ("15415212", "Adolescencia", "Adolescence", "Este drama sobre un adolescente de 13 años acusado de asesinar a una compañera de clase.","2025", "2025", 1, "series", 50),
+             
+             ("16252965", "Pulso", "PULSE", "Un grupo de residentes de Urgencias lidia con sus problemas laborales y personales en el Maguire Medical Center, un hospital de Miami sacudido por una polémica acusación.", "2025", "2025", 1, "series", 50),
+             
+             ("16256534", "Manual para señoritas", "Manual para señoritas", "Una carabina debe encontrar marido a tres hermanas rebeldes mientras sortea las normas de la alta sociedad del siglo XIX... y oculta sus propios secretos.", "2025", "2025", 1, "series", 50);
+        """
+
+        val insertTitulosTop10Peliculas = """
+            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, tipo, rating)
+            VALUES 
+
+            ("8954753", "Sin instrucciones", "Sin instrucciones", "Un soltero vive la vida sin preocupaciones hasta que su ex aparece y le deja a cargo de su bebé. Ochos años después, ella vuelve buscando el perdón... y recuperar a su hija.", "2024", "movie", 50), 
+            
+            ("15409348", "Mi lista de deseos", "The Life List", "Una joven debe cumplir su lista de deseos de adolescente para recibir una herencia en esta película basada en el bestseller del mismo nombre.","2025", "movie", 50);
+        """
+
+        val insertPostersTop10 = """
+            INSERT INTO Poster_Titulo (urlPoster, tipo, calidad, idTitulo)
+            VALUES 
+
+            ("https://pics.filmaffinity.com/el_jardinero-762120016-large.jpg", "vertical", "w360","17340436"),
+            ("https://media.senscritique.com/media/000022782080/0/el_jardinero.jpg", "vertical", "w720","17340436"),
+            ("https://lovingseries.com/wp-content/uploads/2025/03/el-jardinero-netflix.jpg", "horizontal", "w360","17340436"),
+            ("https://images.ctfassets.net/4cd45et68cgf/2t8jX03sfDRguYtT4fvQQM/e549677504be11be46ca49a1e398459d/El_Jardinero_S01_E02_23012024_Niete__DSC7768.jpg?w=2560", "horizontal", "w2560","17340436"),
+            
+            ("https://pics.filmaffinity.com/La_caupula_de_cristal_Miniserie_de_TV-452574751-large.jpg", "vertical", "w360","15415106"),
+            ("https://images.abandomoviez.net/dbs/foto/dbs_5662_73.jpg", "vertical", "w720","15415106"),
+            ("https://cdn.avpasion.com/wp-content/uploads/2025/04/cupula-de-cristal-01.jpg", "horizontal", "w360","15415106"),
+            ("https://cdn.avpasion.com/wp-content/uploads/2025/04/cupula-de-cristal-03.jpg", "horizontal", "w720","15415106"),
+            
+            ("https://pics.filmaffinity.com/Nueva_vida_en_Ransom_Canyon_Serie_de_TV-195027799-large.jpg", "vertical", "w360","15794504"),
+            ("https://static.wikia.nocookie.net/doblaje/images/3/3b/Poster-NVRC.png/revision/latest?cb=20250417194416&path-prefix=es", "vertical", "w720","15794504"),
+            ("https://televitos.com/wp-content/uploads/2025/04/NuevaVidaEnRansomCanyon_08.webp", "horizontal", "w360","15794504"),
+            ("https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/Z-WHgqd_TeJxSuha8aZ5WpyLcX8/AAAABSkNYfTYVHee6S9PsQPBEhBIizNWpMWNBPAGOxv618ISQZTtpzf2i_oL2FXyqxYeYYjCQTbxajM5KMilrpAT8gCayyyHcjjyR12r.jpg?r=482", "horizontal", "w720","15794504"),
+            
+            ("https://pics.filmaffinity.com/adolescence-497490057-large.jpg", "vertical", "w360","15415212"),
+            ("https://es.web.img3.acsta.net/r_1280_720/img/71/2f/712f0d66f71b769f9b15f1dceed7b41a.jpg", "vertical", "w720","15415212"),
+            ("https://s3.abcstatics.com/abc/www/multimedia/play/2025/03/18/adolescence.jpg", "horizontal", "w360","15415212"),
+            ("https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/Z-WHgqd_TeJxSuha8aZ5WpyLcX8/AAAABTwtmCD6J5UhUMrHUJtpSA_iZ1SSDvny4PDwaNDcAPSDOMWI29xaC2XT9isnVsbmhRbrIMYtcv6jutBamcsizbjlqe2dYQEX11UB.jpg?r=92c", "horizontal", "w720","15415212"),
+            
+            ("https://www.infobae.com/resizer/v2/WMX4BXCYVFGWBCQG2VHBKSKBSM.jpg?auth=848a0f8ef83fce084b9eb224833f7f997ffd15b2e35801d6b0ad7e60caefdb1c&smart=true&width=350&height=467&quality=85", "vertical", "w360","16252965"),
+            ("https://pics.filmaffinity.com/pulse-107075411-large.jpg", "vertical", "w720","16252965"),
+            ("https://indiehoy.com/wp-content/uploads/2025/04/pulso-reparto-netflix.jpg", "horizontal", "w360","16252965"),
+            ("https://www.magazinespain.com/wp-content/uploads/2025/03/pulso-portada-min.jpg", "horizontal", "w720","16252965"),
+            
+            ("https://m.media-amazon.com/images/M/MV5BNWE3NTFhYjItNzQ4Ny00MDYxLTg0MDMtYWUwNmYwOTVjYzkzXkEyXkFqcGc@._V1_.jpg", "vertical", "w360","16256534"),
+            ("https://images.ctfassets.net/4cd45et68cgf/3vdcxT7SJu69aPoQUgQmWa/76fe8bff749fcbf834a7a5095bff6051/es-ES_es_mps_s1_main_main_key_art_vertical_27x40_rgb_pre_1.jpg?w=1200", "vertical", "w720","16256534"),
+            ("https://www.lavanguardia.com/peliculas-series/images/all/serie/backdrops/2025/3/serie-280890/w1280/q9aTsvevLD6URZgUruQQI9D94oC.jpg", "horizontal", "w360","16256534"),
+            ("https://fotografias.larazon.es/clipping/cmsimages01/2025/03/11/9A4E80A5-2AB4-46A2-9629-D3EFAF8C76FF/cartel-oficial-serie-manual-senoritas_69.jpg?crop=4594,2584,x48,y0&width=1280&height=720&optimize=low&format=jpg", "horizontal", "w720","16256534"),
+            
+            ("https://images.justwatch.com/poster/330110999/s718/sin-instrucciones-2024.jpg", "vertical", "w360","8954753"),
+            ("https://pics.filmaffinity.com/Sin_instrucciones-513077765-large.jpg", "vertical", "w720","8954753"),
+            ("https://content20.lecturas.com/medio/2025/04/22/sin-instrucciones_b7458678_250422092743_1280x720.webp", "horizontal", "w360","8954753"),
+            ("https://hips.hearstapps.com/hmg-prod/images/sin-instrucciones-pelicula-paco-leon-676abe8a8a2c4.jpg?crop=1.00xw:1.00xh;0,0&resize=1200:*", "horizontal", "w720","8954753"),
+            
+            ("https://es.web.img3.acsta.net/img/30/c9/30c94497f1a8d225a1ce32eda24f21cc.jpg", "vertical", "w360","15409348"),
+            ("https://pics.filmaffinity.com/the_life_list-567019967-large.jpg", "vertical", "w720","15409348"),
+            ("https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABRJr1h76k5VLlX2U78mAHPXZScihTFLUCM7lv5ze-hLPL2jplOm-VATY_NZ16IqBHlUxcbLKBTY7xrkK8HSq3p7ZSw2WER3gye0B.jpg?r=e66", "horizontal", "w360","15409348"),
+            ("https://media.revistagq.com/photos/67ea537b0c8ed04210db38c0/16:9/w_2560%2Cc_limit/LIFELIST_20240425_28639_R%2520(1).jpg", "horizontal", "w720","15409348");
+        """
+
+        val insertGenerosTop10 = """
+            INSERT INTO Genero_Titulo (idGenero, idTitulo)
+            VALUES 
+
+            ("drama","17340436"),
+            ("mystery","17340436"),
+            ("thriller","17340436"),
+            
+            ("drama","15415106"),
+            ("crime","15415106"),
+            
+            ("drama","15794504"),
+            ("romance","15794504"),
+            ("western","15794504"),
+            
+            ("drama","15415212"),
+            ("crime","15415212"),
+            ("mystery","15415212"),
+            
+            ("drama","16252965"),
+            
+            ("comedy","16256534"),
+            ("history","16256534"),
+            ("romance","16256534"),
+            
+            ("comedy","8954753"),
+            
+            ("comedy","15409348"),
+            ("drama","15409348"),
+            ("romance","15409348");
+        """
+
+        val insertPlataformasTop10 = """
+            INSERT INTO Plataforma_Titulo (idPlataforma, idTitulo, pais, disponible)
+            VALUES 
+
+            ("netflix","17340436", "es", 1),
+            ("netflix","15415106", "es", 1),
+            ("netflix","15794504", "es", 1),
+            ("netflix","15415212", "es", 1),
+            ("netflix","16252965", "es", 1),
+            ("netflix","16256534", "es", 1),
+            ("netflix","8954753", "es", 1),
+            ("netflix","15409348", "es", 1);
+        """
+
+        val insertFechaTop10 = """
+            INSERT INTO Top10 (fechaTop)
+            VALUES 
+            
+            ("23-04-2025"),
+            ("23-04-2025");
+        """
+
+        val insertTopsSeparadosTop10 = """
+            INSERT INTO Top10Separado (idTop, tipo)
+            VALUES 
+
+            (1,"series"),
+            (2,"movie");
+        """
+
+        val insertPosicionesTop10 = """
+            INSERT INTO Top10_Titulo (idTop, idTitulo, posicion)
+            VALUES 
+
+            (1,"17340436",1),
+            (1,"15415106",2),
+            (1,"922",3),
+            (1,"15794504",4),
+            (1,"16",5),
+            (1,"15415212",6),
+            (1,"13616",7),
+            (1,"4058",8),
+            (1,"16252965",9),
+            (1,"16256534",10),
+            
+            (2,"8954753",1),
+            (2,"6851",2),
+            (2,"13193",3),
+            (2,"12038",4),
+            (2,"2887096",5),
+            (2,"15409348",6),
+            (2,"5021461",7),
+            (2,"1864",8),
+            (2,"3691",9),
+            (2,"185277",10);
+        """
+
+        val insertPlataformaTop10Separado = """
+            INSERT INTO Top10Separado_Plataforma (idTop, idPlataforma)
+            VALUES 
+
+            (1,"netflix"),
+            (2,"netflix");
+        """
+
         db.execSQL(tablaUsuario)
         db.execSQL(tablaFotoPerfil)
         db.execSQL(tablaTitulo)
@@ -279,6 +447,16 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(insertFotoPerfil)
         db.execSQL(insertAdmin)
         db.execSQL(insertPlataforma)
+        db.execSQL(insertTitulosTop10Series)
+        db.execSQL(insertTitulosTop10Peliculas)
+        db.execSQL(insertPostersTop10)
+        db.execSQL(insertGenerosTop10)
+        db.execSQL(insertPlataformasTop10)
+        db.execSQL(insertFechaTop10)
+        db.execSQL(insertTopsSeparadosTop10)
+        db.execSQL(insertPosicionesTop10)
+        db.execSQL(insertPlataformaTop10Separado)
+
 
     }
 

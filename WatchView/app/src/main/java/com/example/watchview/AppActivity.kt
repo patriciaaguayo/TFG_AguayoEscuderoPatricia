@@ -22,9 +22,20 @@ class AppActivity : AppCompatActivity() {
         if(!BBDD(this).hayGenerosGuardados()){
             ApiDataLoader.fetchGenresFromApi(this)
         }
+
+        val listaSeries = listOf("El descubrimiento de las brujas", "Black Mirror", "Sé quién eres", "Raw")
+
+        val listaPeliculas = listOf("¡Vaya vacaciones!", "¡Rehén", "Siete días y una vida", "Sin malos rollos",
+            "Sniper: E.I.R.G. – Equipo de inteligencia y respuesta global", "La pasión de Cristo", "Los dos Papa", "Sisu")
+
         if(!BBDD(this).hayTitulosGuardados()){
             ApiDataLoader.guardarTitulosNetflix2(this)
+            ApiDataLoader.guardarTitulosPorNombreSeries(this, listaSeries)
+            ApiDataLoader.guardarTitulosPorNombrePeliculas(this, listaPeliculas)
         }
+
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.app)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
