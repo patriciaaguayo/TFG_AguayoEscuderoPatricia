@@ -77,4 +77,7 @@ dependencies {
     // Para pruebas unitarias con JUnit 5
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.8.1")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+
 }

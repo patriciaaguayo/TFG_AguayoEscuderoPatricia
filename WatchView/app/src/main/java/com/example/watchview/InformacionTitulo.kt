@@ -16,7 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 
 
-private lateinit var titulo: Titulo
+lateinit var titulo: Titulo
 
 class InformacionTitulo : Fragment() {
 

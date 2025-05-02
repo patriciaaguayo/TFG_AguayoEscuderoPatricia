@@ -1,0 +1,32 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/fondoLogin1"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/imagenTituloTop"
+        android:layout_width="90dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/miercoles"
+        android:adjustViewBounds="true"/>
+
+    <TextView
+        android:id="@+id/nombreTituloTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre del título"
+        android:fontFamily="@font/baloo_thambi_2"
+        android:textSize="14sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:paddingTop="4dp"
+        android:maxWidth="100dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:lineSpacingExtra="2dp" />
+</LinearLayout>

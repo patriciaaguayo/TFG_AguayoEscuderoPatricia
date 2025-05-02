@@ -15,6 +15,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : AppCompatActivity() {
@@ -59,6 +61,46 @@ class LoginActivity : AppCompatActivity() {
 
         inicio.setOnClickListener{
             iniciarSesion()
+        }
+
+        // Cargar géneros y títulos si no están guardados
+        if(!BBDD(this@LoginActivity).hayGenerosGuardados()){
+            ApiDataLoader.fetchGenresFromApi(this@LoginActivity)
+        }
+
+        lifecycleScope.launch {
+            val listaSeries = listOf(
+                "El descubrimiento de las brujas",
+                "Black Mirror",
+                "Sé quién eres",
+                "Raw"
+            )
+
+            val listaPeliculas = listOf(
+                "¡Vaya vacaciones!",
+                "¡Rehén",
+                "Siete días y una vida",
+                "Sin malos rollos",
+                "Sniper: E.I.R.G. – Equipo de inteligencia y respuesta global",
+                "La pasión de Cristo",
+                "Los dos Papa",
+                "Sisu"
+            )
+
+            val db = BBDD(this@LoginActivity)
+
+            if (!db.hayGenerosGuardados()) {
+                ApiDataLoader.fetchGenresFromApi(this@LoginActivity)
+            }
+
+            // ⚡ Aquí estás esperando a que terminen antes de seguir
+            ApiDataLoader.guardarTitulosPorNombreSeries(this@LoginActivity, listaSeries)
+            ApiDataLoader.guardarTitulosPorNombrePeliculas(this@LoginActivity, listaPeliculas)
+
+            // Ahora ya han terminado, puedes insertar
+            db.insertAllTop10Data()
+
+            Toast.makeText(this@LoginActivity, "Todo cargado correctamente", Toast.LENGTH_SHORT).show()
         }
     }
 
