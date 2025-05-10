@@ -80,4 +80,7 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
+    // Worker para la actualización de los estrenos
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
 }

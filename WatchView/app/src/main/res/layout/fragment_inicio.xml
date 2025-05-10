@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -26,16 +26,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:paddingTop="16dp"
             android:paddingBottom="16dp">
 
+            <!-- Sección Top Series -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp">
 
                 <TextView
@@ -51,8 +52,10 @@
             <LinearLayout
                 android:id="@+id/ContenedorTopSeries"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
                 android:orientation="horizontal"
                 android:gravity="center">
 
@@ -64,12 +67,15 @@
                     android:clipToPadding="false" />
             </LinearLayout>
 
+            <!-- Sección Top Películas -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
 
                 <TextView
                     android:id="@+id/TituloTopPeliculas"
@@ -84,8 +90,10 @@
             <LinearLayout
                 android:id="@+id/ContenedorTopPeliculas"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
                 android:orientation="horizontal"
                 android:gravity="center">
 
@@ -97,19 +105,22 @@
                     android:clipToPadding="false" />
             </LinearLayout>
 
+            <!-- Sección Estrenos -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
 
                 <TextView
                     android:id="@+id/tituloEstrenos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/baloo_thambi_2"
-                    android:text="Estrenos de Netflix"
+                    android:text="Descubre los próximos estrenos de Netflix"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -117,9 +128,9 @@
             <LinearLayout
                 android:id="@+id/ContenedorEstrenosNetflix"
                 android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
                 android:gravity="center">
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -132,5 +143,6 @@
 
         </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
+
 

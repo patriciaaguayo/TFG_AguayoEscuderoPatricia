@@ -1,21 +1,26 @@
 package com.example.watchview
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.database.sqlite.SQLiteStatement
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import java.io.File
 import java.sql.Date
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Locale
 
 class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", null, 1) {
@@ -155,11 +160,9 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             CREATE TABLE Estreno_Titulo (
                 idEstreno INTEGER,
                 idTitulo TEXT,
-                correo TEXT,
-                PRIMARY KEY (idEstreno, idTitulo, correo),
+                PRIMARY KEY (idEstreno, idTitulo),
                 FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
-                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo),
-                FOREIGN KEY (correo) REFERENCES Usuario(correo)
+                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
             );
         """
 
@@ -173,7 +176,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             );
         """
 
-        /*val tablaEstreno_Usuario = """
+        val tablaEstreno_Usuario = """
             CREATE TABLE Estreno_Usuario (
                 idEstreno INTEGER,
                 correo TEXT,
@@ -181,7 +184,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
                 FOREIGN KEY (correo) REFERENCES Usuario(correo)
             );
-        """*/
+        """
 
         val tablaTop10 = """
             CREATE TABLE Top10 (
@@ -250,7 +253,12 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
         val insertAdmin = """
             INSERT INTO Usuario (correo, nombre, pass, idFoto, privilegios)
-            VALUES ("admin@gmail.com", "Admin", "Admin1@", "4", "admin");
+            VALUES ("admin@gmail.com", "Admin", "Admin1!", "4", "admin");
+        """
+
+        val insertUsuario = """
+            INSERT INTO Usuario (correo, nombre, pass, idFoto, privilegios)
+            VALUES ("paco@gmail.com", "Paco", "Paco1!", "1", "usuario");
         """
 
         val insertPlataforma = """
@@ -442,7 +450,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaEstreno_Pelicula)
         db.execSQL(tablaEstreno_Titulo)
         db.execSQL(tablaEstreno_Plataforma)
-        //db.execSQL(tablaEstreno_Usuario)
+        db.execSQL(tablaEstreno_Usuario)
         db.execSQL(tablaTop10)
         db.execSQL(tablaTop10Mezclado)
         db.execSQL(tablaTop10Separado)
@@ -451,6 +459,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaTop10Mezclado_Plataforma)
         db.execSQL(insertFotoPerfil)
         db.execSQL(insertAdmin)
+        db.execSQL(insertUsuario)
         db.execSQL(insertPlataforma)
         /*db.execSQL(insertTitulosTop10Series)
         db.execSQL(insertTitulosTop10Peliculas)
@@ -482,7 +491,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL("DROP TABLE IF EXISTS Estreno_Pelicula")
         db.execSQL("DROP TABLE IF EXISTS Estreno_Titulo")
         db.execSQL("DROP TABLE IF EXISTS Estreno_Plataforma")
-        //db.execSQL("DROP TABLE IF EXISTS Estreno_Usuario")
+        db.execSQL("DROP TABLE IF EXISTS Estreno_Usuario")
         db.execSQL("DROP TABLE IF EXISTS Top10")
         db.execSQL("DROP TABLE IF EXISTS Top10Mezclado")
         db.execSQL("DROP TABLE IF EXISTS Top10Separado")
@@ -1105,12 +1114,27 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
     // Método para obtener la lista de titulo
 
+    // Hay que retocar este método para que solo liste los títulos que no están por estrenarse
     fun listaTitulos(): List<Titulo> {
         val listaTitulos = mutableListOf<Titulo>()
         val db = this.readableDatabase
 
-        val query = "SELECT * FROM Titulo"
-        val cursor = db.rawQuery(query, null)
+        val fechaHoy = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(java.util.Date())
+
+        val query = """
+        SELECT * FROM Titulo 
+        WHERE idTitulo IN (
+            SELECT et.idTitulo 
+            FROM Estreno e
+            INNER JOIN Estreno_Titulo et ON e.idEstreno = et.idEstreno
+            WHERE e.fechaEstreno <= ?
+        )
+        OR idTitulo NOT IN (
+            SELECT idTitulo FROM Estreno_Titulo
+        )
+    """
+
+        val cursor = db.rawQuery(query, arrayOf(fechaHoy))
 
         if (cursor.moveToFirst()) {
             do {
@@ -1125,7 +1149,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 val tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))
                 val rating = cursor.getInt(cursor.getColumnIndexOrThrow("rating"))
 
-                // ---- Posters relacionados ----
                 val posters = mutableListOf<Poster>()
                 val postersCursor = db.rawQuery(
                     "SELECT * FROM Poster_Titulo WHERE idTitulo = ?",
@@ -1146,14 +1169,13 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 }
                 postersCursor.close()
 
-                // ---- Géneros relacionados ----
                 val generos = mutableListOf<Genero>()
                 val generoCursor = db.rawQuery(
                     """
-                    SELECT g.idGenero, g.nombreGenero 
-                    FROM Genero g 
-                    INNER JOIN Genero_Titulo gt ON g.idGenero = gt.idGenero 
-                    WHERE gt.idTitulo = ?
+                SELECT g.idGenero, g.nombreGenero 
+                FROM Genero g 
+                INNER JOIN Genero_Titulo gt ON g.idGenero = gt.idGenero 
+                WHERE gt.idTitulo = ?
                 """.trimIndent(), arrayOf(idTitulo)
                 )
                 if (generoCursor.moveToFirst()) {
@@ -1169,14 +1191,13 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 }
                 generoCursor.close()
 
-                // ---- Plataformas relacionadas ----
                 val plataformas = mutableListOf<Plataforma>()
                 val plataformaCursor = db.rawQuery(
                     """
-                    SELECT p.idPlataforma, p.nombrePlataforma 
-                    FROM Plataforma p 
-                    INNER JOIN Plataforma_Titulo pt ON p.idPlataforma = pt.idPlataforma 
-                    WHERE pt.idTitulo = ?
+                SELECT p.idPlataforma, p.nombrePlataforma 
+                FROM Plataforma p 
+                INNER JOIN Plataforma_Titulo pt ON p.idPlataforma = pt.idPlataforma 
+                WHERE pt.idTitulo = ?
                 """.trimIndent(), arrayOf(idTitulo)
                 )
                 if (plataformaCursor.moveToFirst()) {
@@ -1192,7 +1213,30 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 }
                 plataformaCursor.close()
 
-                // ---- Crear objeto Titulo ----
+                val estrenos = mutableListOf<Estreno>()
+                val estrenoCursor = db.rawQuery(
+                    """
+                SELECT e.idEstreno, e.fechaEstreno, et.idTitulo, ep.idPlataforma
+                FROM Estreno e
+                INNER JOIN Estreno_Titulo et ON e.idEstreno = et.idEstreno
+                INNER JOIN Estreno_Plataforma ep ON e.idEstreno = ep.idEstreno
+                WHERE et.idTitulo = ?
+                """.trimIndent(), arrayOf(idTitulo)
+                )
+                if (estrenoCursor.moveToFirst()) {
+                    do {
+                        estrenos.add(
+                            Estreno(
+                                idEstreno = estrenoCursor.getInt(0),
+                                fechaEstreno = estrenoCursor.getString(1),
+                                idTitulo = estrenoCursor.getString(2),
+                                idPlataforma = estrenoCursor.getString(3)
+                            )
+                        )
+                    } while (estrenoCursor.moveToNext())
+                }
+                estrenoCursor.close()
+
                 listaTitulos.add(
                     Titulo(
                         idTitulo = idTitulo,
@@ -1206,10 +1250,10 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                         rating = rating,
                         posters = posters,
                         generos = generos,
-                        plataformas = plataformas
+                        plataformas = plataformas,
+                        estrenos = estrenos
                     )
                 )
-
             } while (cursor.moveToNext())
         }
 
@@ -1345,6 +1389,31 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 }
                 plataformaCursor.close()
 
+                // ---- Estrenos relacionados ----
+                val estrenos = mutableListOf<Estreno>()
+                val estrenoCursor = db.rawQuery(
+                    """
+                SELECT e.idEstreno, e.fechaEstreno, et.idTitulo, ep.idPlataforma
+                FROM Estreno e
+                INNER JOIN Estreno_Titulo et ON e.idEstreno = et.idEstreno
+                INNER JOIN Estreno_Plataforma ep ON e.idEstreno = ep.idEstreno
+                WHERE et.idTitulo = ?
+                """.trimIndent(), arrayOf(idTitulo)
+                )
+                if (estrenoCursor.moveToFirst()) {
+                    do {
+                        estrenos.add(
+                            Estreno(
+                                idEstreno = estrenoCursor.getInt(0),
+                                fechaEstreno = estrenoCursor.getString(1),
+                                idTitulo = estrenoCursor.getString(2),
+                                idPlataforma = estrenoCursor.getString(3)
+                            )
+                        )
+                    } while (estrenoCursor.moveToNext())
+                }
+                estrenoCursor.close()
+
                 // ---- Crear objeto Titulo ----
                 listaTitulos.add(
                     Titulo(
@@ -1359,7 +1428,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                         rating = rating,
                         posters = posters,
                         generos = generos,
-                        plataformas = plataformas
+                        plataformas = plataformas,
+                        estrenos = estrenos
                     )
                 )
 
@@ -1551,6 +1621,21 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             (2,"185277",10);
         """.trimIndent()
 
+    private val insertPosicionesTop102 = """
+            INSERT INTO Top10_Titulo (idTop, idTitulo, posicion)
+            VALUES 
+
+            (1,"17340436",1),
+            (1,"15415106",2),
+            (1,"15794504",4),
+            (1,"15415212",6),
+            (1,"16252965",9),
+            (1,"16256534",10),
+            
+            (2,"8954753",1),
+            (2,"15409348",6);
+        """.trimIndent()
+
     private val insertPlataformaTop10Separado = """
             INSERT INTO Top10Separado_Plataforma (idTop, idPlataforma)
             VALUES 
@@ -1561,27 +1646,30 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
 
     fun insertAllTop10Data() {
         val db = writableDatabase
-        db.beginTransaction()
+        val top10TituloIds = listOf(
+            "17340436", "15415106", "15794504", "15415212",
+            "16252965", "16256534", "8954753", "15409348"
+        )
 
+        db.beginTransaction()
         try {
-            // Comprobación de duplicados para evitar insertar títulos ya existentes
-            if (isIdTitleExists(db, "17340436") || isIdTitleExists(db, "15415106") || isIdTitleExists(db, "15794504") ||
-                isIdTitleExists(db, "15415212") || isIdTitleExists(db, "16252965") || isIdTitleExists(db, "16256534") ||
-                isIdTitleExists(db, "8954753") || isIdTitleExists(db, "15409348")) {
-                Log.d("BBDD", "Algunos títulos ya existen. No se insertaron nuevos títulos.")
-                return  // Si algún título ya existe, no se realiza la inserción.
+            val existenTitulos = top10TituloIds.any { isIdTitleExists(db, it) }
+            if (existenTitulos) {
+                Log.d("BBDD", "Algunos títulos del Top 10 ya existen. No se insertaron nuevos títulos.")
+                return
             }
 
-            // Si no se encontró ningún ID duplicado, procedemos con las inserciones
-            db.execSQL(insertTitulosTop10Series.trimIndent())
-            db.execSQL(insertTitulosTop10Peliculas.trimIndent())
-            db.execSQL(insertPostersTop10.trimIndent())
-            db.execSQL(insertGenerosTop10.trimIndent())
-            db.execSQL(insertPlataformasTop10.trimIndent())
-            db.execSQL(insertFechaTop10.trimIndent())
-            db.execSQL(insertTopsSeparadosTop10.trimIndent())
-            db.execSQL(insertPosicionesTop10.trimIndent())
-            db.execSQL(insertPlataformaTop10Separado.trimIndent())
+            listOf(
+                insertTitulosTop10Series,
+                insertTitulosTop10Peliculas,
+                insertPostersTop10,
+                insertGenerosTop10,
+                insertPlataformasTop10,
+                insertFechaTop10,
+                insertPlataformaTop10Separado,
+                insertTopsSeparadosTop10,
+                insertPosicionesTop102
+            ).forEach { db.execSQL(it.trimIndent()) }
 
             db.setTransactionSuccessful()
             Log.d("BBDD", "Datos del Top 10 insertados correctamente.")
@@ -1592,6 +1680,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             db.close()
         }
     }
+
 
     fun isIdTitleExists(db: SQLiteDatabase, idTitulo: String): Boolean {
         val cursor = db.rawQuery("SELECT 1 FROM Titulo WHERE idTitulo = ?", arrayOf(idTitulo))
@@ -1640,6 +1729,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 // Obtener plataformas asociadas al título
                 val plataformas = obtenerPlataformasPorTitulo(idTitulo)
 
+                val estrenos = obtenerEstrenosPorTitulo(idTitulo)
+
                 // Crear objeto Titulo
                 val titulo = Titulo(
                     idTitulo = idTitulo,
@@ -1653,7 +1744,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                     rating = rating,
                     posters = posters,
                     generos = generos,
-                    plataformas = plataformas
+                    plataformas = plataformas,
+                    estrenos = estrenos
                 )
 
                 lista.add(TopTitulo(titulo, posicion))
@@ -1768,6 +1860,39 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return plataformas
     }
 
+    // Función para obtener las plataformas asociadas a un título
+    fun obtenerEstrenosPorTitulo(idTitulo: String): List<Estreno> {
+        val db = this.readableDatabase
+        val estrenos = mutableListOf<Estreno>()
+
+        val query = """
+        SELECT e.idEstreno, e.fechaEstreno, ep.idPlataforma
+        FROM Estreno e
+        INNER JOIN Estreno_Titulo et ON e.idEstreno = et.idEstreno
+        INNER JOIN Estreno_Plataforma ep ON e.idEstreno = ep.idEstreno
+        WHERE et.idTitulo = ?
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(idTitulo))
+
+        if (cursor.moveToFirst()) {
+            do {
+                estrenos.add(
+                    Estreno(
+                        idEstreno = cursor.getInt(0),
+                        fechaEstreno = cursor.getString(1),
+                        idTitulo = idTitulo,
+                        idPlataforma = cursor.getString(2)
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return estrenos
+    }
+
     // Verificación si la plataforma ya está en la tabla Top10Separado_Plataforma
     private fun existeTop10SeparadoPlataforma(db: SQLiteDatabase, idPlataforma: String): Boolean {
         val cursor = db.query(
@@ -1823,6 +1948,736 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         val existe = cursor.count > 0
         cursor.close()
         return existe
+    }
+
+    // Insertar los estrenos manualmente en la BBDD
+
+    private val insertTitulosEstrenosSeries = """
+            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, fechaFin, temporadas, tipo, rating)
+            VALUES 
+
+            ("185", "You", "You", "Cuando un brillante administrador de librería se cruza con una aspirante a escritora, utiliza Internet y las redes sociales para reunir los detalles más intimos y acercarse a ella.", "2018", "2025", 5, "series", 77),
+             
+             ("18436084", "Serpientes y Escaleras", "Serpientes y Escaleras", "Una ambiciosa profesora infravalorada aspira a dirigir un prestigioso colegio, pero, para llegar a la cima, deberá trepar por una resbaladiza cuesta de corrupción y mentiras.", "2025", "2025", 1, "series", 40);
+        """.trimIndent()
+
+    private val insertTitulosEstrenosPeliculas = """
+            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, tipo, rating)
+            VALUES 
+
+            ("14625603", "Mala influencia", "Mala influencia", "Un expresidiario empieza de cero cuando lo contratan para proteger a una rica heredera de un acosador pero, a medida que se conocen, cuesta resistirse a su química.", "2025", "movie", 55), 
+            
+            ("16692284", "La calle del terror: La reina del baile", "Fear Street: Prom Queen", "¿Quién será la reina del baile de 1988 del instituto Shadyside? La competencia de la discreta Lori es feroz incluso antes de que alguien empiece a matar a las candidatas.","2025", "movie", 40);
+        """.trimIndent()
+
+    private val insertPostersEstrenos = """
+            INSERT INTO Poster_Titulo (urlPoster, tipo, calidad, idTitulo)
+            VALUES 
+
+            ("https://pbs.twimg.com/media/GpTpqB5XEAA0BRY.jpg", "vertical", "w360","185"),
+            ("https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Ffirst-poster-for-the-final-season-of-you-releasing-in-2025-v0-ydubkzph1u7e1.jpg%3Fwidth%3D640%26crop%3Dsmart%26auto%3Dwebp%26s%3Dda0ee5c2c37a0d08cd3ba0fb208337c54021631b&rdt=46870", "vertical", "w720","185"),
+            ("https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1Cw07C.img?w=768&h=432&m=6&x=252&y=105&s=550&d=100", "horizontal", "w360","185"),
+            ("https://occ-0-8407-92.1.nflxso.net/dnm/api/v6/Z-WHgqd_TeJxSuha8aZ5WpyLcX8/AAAABdAI-UJGlj9fhiyRZwAK_CDFVDxcEvPv6TyzlynQWS2nEg6-nJK_juP58OOIdAbB1Hc9H9BLZbXo--bVM2E7ZeCM6YJtu1qAFSX0.jpg?r=e5c", "horizontal", "w720","185"),
+            
+            ("https://m.media-amazon.com/images/M/MV5BNDVmZTliNWYtMjMwMC00NDJkLWFjZGItZmZlY2UzMGQwMDlmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg", "vertical", "w360","18436084"),
+            ("https://marieclaire.com.mx/wp-content/uploads/2025/04/serpientes-y-escaleras-serie-3-819x1024.jpg", "vertical", "w720","18436084"),
+            ("https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABTX6j5mitj4ZO2e3I8dZsM0Dfv7nhiuEdy3h2rhRXTybnGEkBE9DDhwAlXp2JeCLhRZys26gUGpVPK7UKuEeXp9sf7fTj96C7eFF.jpg?r=4da", "horizontal", "w360","18436084"),
+            ("https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/9pS1daC2n6UGc3dUogvWIPMR_OU/AAAABSy6sfSVS9zVHtzpXfxXrX-RxKkTIDMkJpe5XypcSMzXb_IbpKsXlddQvKrgt57F6Nky11Z4KASS6bgGMold6RpTpN541ZARnK3XU6Z3uU8X87nG7ujRW_CRPQ.jpg?r=bab", "horizontal", "w720","18436084"),
+            
+            ("https://nadieesperfecto.com/wp-content/uploads/2024/12/MALA_INFLUENCIA_MAIN_KA_POST_INSTAGRAM-scaled.jpg", "vertical", "w360","14625603"),
+            ("https://m.media-amazon.com/images/M/MV5BNzBkMDZiOTYtN2U0Zi00NWU4LWFkMmYtZTUwOGYwZGE2NjdhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg", "vertical", "w720","14625603"),
+            ("https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABbcXq94ucNjJRfnhJPJGVnQy-SF5CQ6a2_GdTx8rZ6s29LCE7DEQsTzIw17G668-6HgvgD7n3DmWkBUDaL763pDXeA4rSCLw17jb.jpg?r=35c", "horizontal", "w360","14625603"),
+            ("https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABXLR0Usf2SeEpdRM1uORNcFKLaCxkXdQHvjZttPQeFyjTgOT3UKV-Lbw1dTUCKkEVwm8C-hbJCFSL2sB75rXx9loRaOr_OZCDsI6.jpg?r=e30", "horizontal", "w720","14625603"),
+            
+            ("https://m.media-amazon.com/images/M/MV5BNjJlMDJjZTctNDlkYi00YTNmLWIyZjUtZjdmZTFhNDQwMTQ4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg", "vertical", "w360","16692284"),
+            ("https://img.aullidos.com/imagenes/varios/calle-terror-reina-baile-2.jpeg", "vertical", "w720","16692284"),
+            ("https://cdn.pipocamoderna.com.br/storage/2025/04/fear_street_prom_queen.png", "horizontal", "w360","16692284"),
+            ("https://occ-0-8407-92.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABdrkxnJbYtv4wqiFF5Qa2wWVLsCxeheiTGuyfHn__tUebYbg_DXKtE1EHLcLnVvWO39yH2r9IIIFP08Dr0ULG1dIZVnbJmBtzdPF.jpg?r=bff", "horizontal", "w720","16692284");
+        """.trimIndent()
+
+    private val insertGenerosEstrenos = """
+            INSERT INTO Genero_Titulo (idGenero, idTitulo)
+            VALUES 
+
+            ("comedy","18436084"),
+            
+            ("crime","185"),
+            ("romance","185"),
+            
+            ("romance","14625603"),
+            ("thriller","14625603"),
+            
+            ("mystery","16692284"),
+            ("thriller","16692284"),
+            ("horror","16692284");
+        """.trimIndent()
+
+    private val insertPlataformasEstrenos = """
+            INSERT INTO Plataforma_Titulo (idPlataforma, idTitulo, pais, disponible)
+            VALUES 
+
+            ("netflix","18436084", "es", 1),
+            ("netflix","185", "es", 1),
+            ("netflix","14625603", "es", 1),
+            ("netflix","16692284", "es", 1);
+        """.trimIndent()
+
+    /*val tablaEstreno = """
+            CREATE TABLE Estreno (
+                idEstreno INTEGER PRIMARY KEY AUTOINCREMENT,
+                fechaEstreno TEXT NOT NULL
+            );
+        """
+
+     */
+
+    private val insertEstrenos = """
+            INSERT INTO Estreno (fechaEstreno)
+            VALUES 
+
+            ("2025-05-09"),
+            ("2025-05-25"),
+            ("2025-05-08"),
+            ("2025-05-14");
+        """.trimIndent()
+
+    /*val tablaEstreno_Serie = """
+            CREATE TABLE Estreno_Serie (
+                idEstreno INTEGER PRIMARY KEY,
+                temporada INTEGER NOT NULL,
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno)
+            );
+        """
+
+     */
+
+    private val insertEstrenosSeries = """
+            INSERT INTO Estreno_Serie (idEstreno, temporada)
+            VALUES 
+
+            (3,5),
+            (4,1); 
+        """.trimIndent()
+
+    /*val tablaEstreno_Pelicula = """
+            CREATE TABLE Estreno_Pelicula (
+                idEstreno INTEGER PRIMARY KEY,
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno)
+            );
+        """
+
+     */
+
+    private val insertEstrenosPeliculas = """
+            INSERT INTO Estreno_Pelicula (idEstreno)
+            VALUES 
+
+            (1),
+            (2); 
+        """.trimIndent()
+
+    /*val tablaEstreno_Titulo = """
+            CREATE TABLE Estreno_Titulo (
+                idEstreno INTEGER,
+                idTitulo TEXT,
+                PRIMARY KEY (idEstreno, idTitulo),
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
+                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
+            );
+        """
+    */
+
+    private val insertEstrenosTitulos = """
+        INSERT INTO Estreno_Titulo (idEstreno, idTitulo)
+        VALUES 
+        (1, "14625603"),
+        (2, "16692284"),
+        (3, "185"),
+        (4, "18436084");
+    """.trimIndent()
+
+    /*val tablaEstreno_Plataforma = """
+            CREATE TABLE Estreno_Plataforma (
+                idEstreno INTEGER,
+                idPlataforma TEXT,
+                PRIMARY KEY (idEstreno, idPlataforma),
+                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
+                FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
+            );
+        """
+    */
+
+    private val insertEstrenosPlataforma = """
+        INSERT INTO Estreno_Plataforma (idEstreno, idPlataforma)
+        VALUES 
+        (1, "netflix"),
+        (2, "netflix"),
+        (3, "netflix"),
+        (4, "netflix");
+    """.trimIndent()
+
+    fun insertAllEstrenosData() {
+        val db = writableDatabase
+        val titulosEstrenoIds = listOf("14625603", "16692284", "185", "18436084")
+
+        db.beginTransaction()
+        try {
+            val existenTitulos = titulosEstrenoIds.any { isIdTitleExists(db, it) }
+            if (existenTitulos) {
+                Log.d("BBDD", "Algunos títulos ya existen. No se insertaron nuevos títulos.")
+                return
+            }
+
+            listOf(
+                insertTitulosEstrenosSeries,
+                insertTitulosEstrenosPeliculas,
+                insertPostersEstrenos,
+                insertGenerosEstrenos,
+                insertPlataformasEstrenos,
+                insertEstrenos,
+                insertEstrenosSeries,
+                insertEstrenosPeliculas,
+                insertEstrenosTitulos,
+                insertEstrenosPlataforma
+            ).forEach { db.execSQL(it.trimIndent()) }
+
+            db.setTransactionSuccessful()
+            Log.d("BBDD", "Estrenos insertados correctamente.")
+        } catch (e: Exception) {
+            Log.e("BBDD", "Error insertando estrenos: ${e.message}")
+        } finally {
+            db.endTransaction()
+            db.close()
+        }
+    }
+
+    fun insertGeneros() {
+        val db = writableDatabase
+        val generos = listOf(
+            "action" to "Acción",
+            "animation" to "Animación",
+            "adventure" to "Aventura",
+            "scifi" to "Ciencia Ficción",
+            "comedy" to "Comedia",
+            "crime" to "Crimen",
+            "documentary" to "Documental",
+            "drama" to "Drama",
+            "family" to "Familia",
+            "fantasy" to "Fantasía",
+            "war" to "Guerra",
+            "history" to "Historia",
+            "mystery" to "Misterio",
+            "music" to "Música",
+            "news" to "Noticias",
+            "talk" to "Programa de Entrevistas",
+            "reality" to "Realidad",
+            "romance" to "Romance",
+            "thriller" to "Suspenso",
+            "horror" to "Terror",
+            "western" to "Western"
+        )
+
+        db.beginTransaction()
+        try {
+            generos.filterNot { existeGenero(db, it.first) }
+                .forEach { (id, nombre) ->
+                    db.execSQL("INSERT INTO Genero (idGenero, nombreGenero) VALUES (?, ?)", arrayOf(id, nombre))
+                }
+
+            db.setTransactionSuccessful()
+            Log.d("BBDD", "Géneros insertados (evitando duplicados).")
+        } catch (e: Exception) {
+            Log.e("BBDD", "Error al insertar géneros: ${e.message}")
+        } finally {
+            db.endTransaction()
+            db.close()
+        }
+    }
+
+
+    fun existeGenero(db: SQLiteDatabase, idGenero: String): Boolean {
+        val cursor = db.rawQuery("SELECT 1 FROM Genero WHERE idGenero = ?", arrayOf(idGenero))
+        val existe = cursor.moveToFirst()
+        cursor.close()
+        return existe
+    }
+
+
+    // Funciones para verificar, guardar y eliminar un estreno
+
+    fun usuarioHaGuardadoEstreno(correo: String, idEstreno: Int): Boolean {
+        val db = this.readableDatabase
+        val query = """
+        SELECT 1 FROM Estreno_Usuario 
+        WHERE correo = ? AND idEstreno = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(correo, idEstreno.toString()))
+        val exists = cursor.count > 0
+        cursor.close()
+        return exists
+    }
+
+    fun guardarEstrenoUsuario(correo: String, idEstreno: Int) {
+        val db = this.readableDatabase
+        val stmt = db.compileStatement("INSERT OR IGNORE INTO Estreno_Usuario (idEstreno, correo) VALUES (?, ?)")
+        stmt.bindLong(1, idEstreno.toLong())
+        stmt.bindString(2, correo)
+        stmt.executeInsert()
+    }
+
+    fun eliminarEstrenoGuardado(correo: String, idEstreno: Int) {
+        val db = this.readableDatabase
+        val stmt = db.compileStatement("DELETE FROM Estreno_Usuario WHERE correo = ? AND idEstreno = ?")
+        stmt.bindString(1, correo)
+        stmt.bindLong(2, idEstreno.toLong())
+        stmt.executeUpdateDelete()
+    }
+
+    // Función para obtener la lista de los estrenos
+
+    fun listarTitulosPorPlataformaConEstreno(idPlataforma: String): List<Titulo> {
+        val db = this.readableDatabase
+        val titulos = mutableListOf<Titulo>()
+        val query = """
+        SELECT T.idTitulo, T.nombre, T.nombreOriginal, T.descripcion, T.fechaInicio, T.fechaFin, T.temporadas, T.tipo, T.rating
+        FROM Titulo T
+        INNER JOIN Estreno_Titulo ET ON T.idTitulo = ET.idTitulo
+        INNER JOIN Estreno E ON E.idEstreno = ET.idEstreno
+        INNER JOIN Estreno_Plataforma EP ON E.idEstreno = EP.idEstreno
+        WHERE EP.idPlataforma = ?
+        AND date(E.fechaEstreno) > date('now')
+        GROUP BY T.idTitulo
+    """
+        val cursor = db.rawQuery(query, arrayOf(idPlataforma))
+        while (cursor.moveToNext()) {
+            val idTitulo = cursor.getString(0)
+            val titulo = Titulo(
+                idTitulo = idTitulo,
+                nombre = cursor.getString(1),
+                nombreOriginal = cursor.getString(2),
+                descripcion = cursor.getString(3),
+                fechaInicio = cursor.getString(4),
+                fechaFin = cursor.getString(5),
+                temporadas = cursor.getInt(6),
+                tipo = cursor.getString(7),
+                rating = cursor.getInt(8),
+                plataformas = obtenerPlataformasPorTitulo(idTitulo),
+                estrenos = obtenerEstrenosPorTitulo(idTitulo),
+                posters = obtenerPostersPorTitulo(idTitulo),
+                generos = obtenerGenerosPorTitulo(idTitulo)
+            )
+            titulos.add(titulo)
+        }
+        cursor.close()
+        return titulos
+    }
+
+    fun listarTitulosPorPlataformaConEstreno2(idPlataforma: String): List<Titulo> {
+        val db = this.readableDatabase
+        val titulos = mutableListOf<Titulo>()
+        val query = """
+    SELECT T.idTitulo, T.nombre, T.nombreOriginal, T.descripcion, T.fechaInicio, T.fechaFin, T.temporadas, T.tipo, T.rating
+    FROM Titulo T
+    INNER JOIN Estreno_Titulo ET ON T.idTitulo = ET.idTitulo
+    INNER JOIN Estreno E ON E.idEstreno = ET.idEstreno
+    INNER JOIN Estreno_Plataforma EP ON E.idEstreno = EP.idEstreno
+    WHERE EP.idPlataforma = ?
+    AND datetime(E.fechaEstreno) > datetime('now')
+    GROUP BY T.idTitulo
+    """
+        val cursor = db.rawQuery(query, arrayOf(idPlataforma))
+        while (cursor.moveToNext()) {
+            val idTitulo = cursor.getString(0)
+            val titulo = Titulo(
+                idTitulo = idTitulo,
+                nombre = cursor.getString(1),
+                nombreOriginal = cursor.getString(2),
+                descripcion = cursor.getString(3),
+                fechaInicio = cursor.getString(4),
+                fechaFin = cursor.getString(5),
+                temporadas = cursor.getInt(6),
+                tipo = cursor.getString(7),
+                rating = cursor.getInt(8),
+                plataformas = obtenerPlataformasPorTitulo(idTitulo),
+                estrenos = obtenerEstrenosPorTitulo(idTitulo),
+                posters = obtenerPostersPorTitulo(idTitulo),
+                generos = obtenerGenerosPorTitulo(idTitulo)
+            )
+            titulos.add(titulo)
+        }
+        cursor.close()
+        return titulos
+    }
+
+
+    // Función para revisar los estrenos y actualizar las listas
+
+    fun revisarEstrenosYActualizarListas2(context: Context) {
+        val db = this.writableDatabase
+        val formatoFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val fechaHoyDate = formatoFecha.parse(formatoFecha.format(java.util.Date()))
+        val estrenos = obtenerEstrenos() // List<Estreno>
+
+        for (estreno in estrenos) {
+            val idEstreno = estreno.idEstreno
+            val idTitulo = estreno.idTitulo
+            val fechaEstrenoDate = formatoFecha.parse(estreno.fechaEstreno)
+
+            if (fechaEstrenoDate != null && fechaHoyDate != null) {
+
+                if (fechaEstrenoDate == fechaHoyDate) {
+                    obtenerNombreTitulo(idTitulo)?.let {
+                        mostrarNotificacionDeEstreno2(context, it)
+                        actualizarTodosLosTitulosVistos()
+                        listarTitulosPorPlataformaConEstreno("netflix")
+                    }
+                }
+
+                if (fechaEstrenoDate <= fechaHoyDate) {
+                    val cursor = db.rawQuery(
+                        "SELECT correo FROM Estreno_Usuario WHERE idEstreno = ?",
+                        arrayOf(idEstreno.toString())
+                    )
+
+                    while (cursor.moveToNext()) {
+                        val correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
+
+                        val checkCursor = db.rawQuery(
+                            "SELECT 1 FROM Usuario_Titulo WHERE correo = ? AND idTitulo = ?",
+                            arrayOf(correo, idTitulo)
+                        )
+                        if (!checkCursor.moveToFirst()) {
+                            val values = ContentValues().apply {
+                                put("correo", correo)
+                                put("idTitulo", idTitulo)
+                            }
+                            db.insert("Usuario_Titulo", null, values)
+                        }
+                        checkCursor.close()
+                    }
+                    cursor.close()
+
+                    // Eliminación de registros asociados al estreno
+                    db.delete("Estreno_Usuario", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                    db.delete("Estreno_Plataforma", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                    db.delete("Estreno_Titulo", "idEstreno = ?", arrayOf(idEstreno.toString()))
+
+                    // Nueva función para determinar tipo y eliminar de tabla correspondiente
+                    eliminarEstrenoPorTipo(db, idEstreno, idTitulo)
+
+                    db.delete("Estreno", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                }
+            }
+        }
+
+        db.close()
+    }
+
+
+
+    fun revisarEstrenosYActualizarListas(context: Context) {
+        val db = this.writableDatabase
+        val fechaHoy = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(java.util.Date())
+        val estrenos = obtenerEstrenos() // Esta función debería traerte todos los estrenos con sus idEstreno, fecha y idTitulo
+
+        for (estreno in estrenos) {
+            val idEstreno = estreno.idEstreno
+            val idTitulo = estreno.idTitulo
+            val fechaEstreno = estreno.fechaEstreno
+
+            if (fechaEstreno == fechaHoy) {
+                obtenerNombreTitulo(idTitulo)?.let {
+                    mostrarNotificacionDeEstreno(context, it)
+                }
+            }
+
+            if (fechaEstreno < fechaHoy) {
+                // Obtener usuarios que tienen este estreno guardado
+                val cursor = db.rawQuery(
+                    "SELECT correo FROM Estreno_Usuario WHERE idEstreno = ?",
+                    arrayOf(idEstreno.toString())
+                )
+
+                while (cursor.moveToNext()) {
+                    val correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
+
+                    // Verificamos si ya está en Usuario_Titulo
+                    val checkCursor = db.rawQuery(
+                        "SELECT 1 FROM Usuario_Titulo WHERE correo = ? AND idTitulo = ?",
+                        arrayOf(correo, idTitulo)
+                    )
+                    if (!checkCursor.moveToFirst()) {
+                        val values = ContentValues().apply {
+                            put("correo", correo)
+                            put("idTitulo", idTitulo)
+                        }
+                        db.insert("Usuario_Titulo", null, values)
+                    }
+                    checkCursor.close()
+                }
+
+                cursor.close()
+
+                // Limpieza de tablas relacionadas con el estreno
+                db.delete("Estreno_Usuario", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                db.delete("Estreno_Plataforma", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                db.delete("Estreno_Titulo", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                db.delete("Estreno", "idEstreno = ?", arrayOf(idEstreno.toString()))
+            }
+        }
+
+        db.close()
+    }
+
+    fun mostrarNotificacionDeEstreno(context: Context, titulo: String) {
+        val channelId = "estrenos_channel"
+        val channelName = "Notificaciones de Estrenos"
+        val notificationId = titulo.hashCode() // Para evitar duplicados
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Crear canal (obligatorio en Android 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Notifica cuando se estrenan títulos"
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_launcher_foreground) // Cambia por tu icono
+            .setContentTitle("¡Estreno disponible!")
+            .setContentText("Ya está disponible: $titulo")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        // Mostrar la notificación
+        notificationManager.notify(notificationId, builder.build())
+    }
+
+    fun mostrarNotificacionDeEstreno2(context: Context, titulo: String) {
+        val channelId = "estrenos_channel"
+        val channelName = "Notificaciones de Estrenos"
+        val notificationId = titulo.hashCode() // Para evitar duplicados
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Crear canal (obligatorio en Android 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Notifica cuando se estrenan títulos"
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // Cargar el icono de la app desde los recursos
+        val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.logoapp2) // Reemplaza con tu icono
+
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.logoapp2) // Icono pequeño de la notificación (también puedes cambiarlo)
+            .setContentTitle("¡Estreno disponible!")
+            .setContentText("Ya está disponible: $titulo")
+            .setLargeIcon(largeIcon)  // Establece el icono grande para la notificación
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        // Mostrar la notificación
+        notificationManager.notify(notificationId, builder.build())
+    }
+
+
+    fun actualizarTodosLosTitulosVistos() {
+        val db = this.writableDatabase
+        val fechaHoy = LocalDate.now().toString() // Formato yyyy-MM-dd
+
+        // Obtener todos los estrenos pasados o iguales a hoy junto con el correo del usuario
+        val query = """
+        SELECT EU.correo, ET.idTitulo, EU.idEstreno
+        FROM Estreno_Usuario EU
+        JOIN Estreno E ON EU.idEstreno = E.idEstreno
+        JOIN Estreno_Titulo ET ON E.idEstreno = ET.idEstreno
+        WHERE date(E.fechaEstreno) <= date(?)
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(fechaHoy))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
+                val idTitulo = cursor.getString(cursor.getColumnIndexOrThrow("idTitulo"))
+                val idEstreno = cursor.getInt(cursor.getColumnIndexOrThrow("idEstreno"))
+
+                // Verificar si ya existe en Usuario_Titulo
+                val checkCursor = db.rawQuery(
+                    "SELECT 1 FROM Usuario_Titulo WHERE correo = ? AND idTitulo = ?",
+                    arrayOf(correo, idTitulo)
+                )
+
+                val yaExiste = checkCursor.moveToFirst()
+                checkCursor.close()
+
+                if (!yaExiste) {
+                    // Insertar en Usuario_Titulo si no existe
+                    val values = ContentValues().apply {
+                        put("correo", correo)
+                        put("idTitulo", idTitulo)
+                    }
+                    db.insert("Usuario_Titulo", null, values)
+                }
+
+                // En ambos casos (exista o no), eliminar de Estreno_Usuario si el título se movió
+                db.delete("Estreno_Usuario", "idEstreno = ? AND correo = ?", arrayOf(idEstreno.toString(), correo))
+
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+
+    fun obtenerEstrenos(): List<Estreno> {
+        val listaEstrenos = mutableListOf<Estreno>()
+        val db = this.readableDatabase
+
+        val query = """
+        SELECT e.idEstreno, e.fechaEstreno, et.idTitulo, ep.idPlataforma, t.tipo
+        FROM Estreno e
+        INNER JOIN Estreno_Titulo et ON e.idEstreno = et.idEstreno
+        INNER JOIN Estreno_Plataforma ep ON e.idEstreno = ep.idEstreno
+        INNER JOIN Titulo t ON et.idTitulo = t.idTitulo
+    """
+
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idEstreno = cursor.getInt(cursor.getColumnIndexOrThrow("idEstreno"))
+                val fechaEstreno = cursor.getString(cursor.getColumnIndexOrThrow("fechaEstreno"))
+                val idTitulo = cursor.getString(cursor.getColumnIndexOrThrow("idTitulo"))
+                val idPlataforma = cursor.getString(cursor.getColumnIndexOrThrow("idPlataforma"))
+                val tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))
+
+                listaEstrenos.add(Estreno(idEstreno, fechaEstreno, idTitulo, idPlataforma))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+
+        return listaEstrenos
+    }
+
+    fun eliminarEstrenoPorTipo(db: SQLiteDatabase, idEstreno: Int, idTitulo: String) {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT tipo FROM Titulo WHERE idTitulo = ?",
+            arrayOf(idTitulo)
+        )
+
+        if (cursor.moveToFirst()) {
+            val tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"))?.lowercase(Locale.getDefault())
+
+            when (tipo) {
+                "serie" -> db.delete("Estreno_Serie", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                "pelicula" -> db.delete("Estreno_Pelicula", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                else -> Log.w("EliminarEstreno", "Tipo de título desconocido: $tipo")
+            }
+        }
+
+        cursor.close()
+    }
+
+    fun obtenerNombreTitulo(idTitulo: String): String? {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT nombre FROM Titulo WHERE idTitulo = ?", arrayOf(idTitulo))
+        var nombre: String? = null
+        if (cursor.moveToFirst()) {
+            nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre"))
+        }
+        cursor.close()
+        db.close()
+        return nombre
+    }
+
+    fun insertUsuarioEstreno(idEstreno: Int, correo: String) {
+        val db = writableDatabase
+
+        db.beginTransaction()
+        try {
+            val values = ContentValues().apply {
+                put("idEstreno", idEstreno)
+                put("correo", correo)
+            }
+
+            db.insertOrThrow("Estreno_Usuario", null, values)
+            db.setTransactionSuccessful()
+
+            Log.d("BBDD", "Estreno guardado correctamente")
+        } catch (e: Exception) {
+            Log.e("BBDD", "Error al guardar estreno: ${e.message}")
+        } finally {
+            db.endTransaction()
+            db.close()
+        }
+    }
+
+    // Función para guardar los títulos estrenados en la lista del usuario
+
+    fun actualizarTitulosVistosPorUsuario(correoUsuario: String) {
+        val db = this.writableDatabase
+        val fechaHoy = LocalDate.now().toString() // Formato yyyy-MM-dd
+
+        // Consulta los estrenos guardados por el usuario cuya fecha ya ha pasado o es hoy
+        val query = """
+        SELECT ET.idTitulo, EU.idEstreno
+        FROM Estreno_Usuario EU
+        JOIN Estreno E ON EU.idEstreno = E.idEstreno
+        JOIN Estreno_Titulo ET ON E.idEstreno = ET.idEstreno
+        WHERE EU.correo = ? AND date(E.fechaEstreno) <= date(?)
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(correoUsuario, fechaHoy))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val idTitulo = cursor.getString(cursor.getColumnIndexOrThrow("idTitulo"))
+                val idEstreno = cursor.getInt(cursor.getColumnIndexOrThrow("idEstreno"))
+
+                // Verifica si ya está guardado en Usuario_Titulo
+                val checkCursor = db.rawQuery(
+                    "SELECT 1 FROM Usuario_Titulo WHERE correo = ? AND idTitulo = ?",
+                    arrayOf(correoUsuario, idTitulo)
+                )
+
+                if (!checkCursor.moveToFirst()) {
+                    // Si el título no está guardado, lo agregamos a Usuario_Titulo
+                    val values = ContentValues().apply {
+                        put("correo", correoUsuario)
+                        put("idTitulo", idTitulo)
+                    }
+                    db.insert("Usuario_Titulo", null, values)
+                }
+
+                // Si el título se guardó correctamente en Usuario_Titulo, eliminamos el registro de Estreno_Usuario
+                if (checkCursor.moveToFirst()) {
+                    db.delete("Estreno_Usuario", "idEstreno = ? AND correo = ?", arrayOf(idEstreno.toString(), correoUsuario))
+                }
+
+                checkCursor.close()
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
     }
 
 }

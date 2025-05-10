@@ -1,13 +1,26 @@
 package com.example.watchview
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 
 class Inicio : Fragment() {
@@ -15,6 +28,11 @@ class Inicio : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
+    /*override fun onResume() {
+        super.onResume()
+        actualizarEstrenosRecycler()
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +62,11 @@ class Inicio : Fragment() {
         Log.d("TopSeries", "Cantidad de series: ${topSeriesNetflix.size}")
         Log.d("TopPeliculas", "Cantidad de películas: ${topPeliculasNetflix.size}")
 
+        // RECYCLER ESTRENOS
+        val listaEstrenos: List<Titulo> = db.listarTitulosPorPlataformaConEstreno2("netflix")
+        val recyclerEstrenos = view.findViewById<RecyclerView>(R.id.recyclerEstrenosNetflix)
+        recyclerEstrenos.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        recyclerEstrenos.adapter = AdaptadorInicioEstreno(listaEstrenos)
 
         return view
     }
@@ -62,4 +85,13 @@ class Inicio : Fragment() {
             .addToBackStack(null)
             .commit()
     }
+
+    // Actualiza la lista de estrenos
+    private fun actualizarEstrenosRecycler() {
+        val db = BBDD(requireContext())
+        val listaEstrenos: List<Titulo> = db.listarTitulosPorPlataformaConEstreno("netflix")
+        val recyclerEstrenos = view?.findViewById<RecyclerView>(R.id.recyclerEstrenosNetflix)
+        recyclerEstrenos?.adapter = AdaptadorInicioEstreno(listaEstrenos)
+    }
+
 }

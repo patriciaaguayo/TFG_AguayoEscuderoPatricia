@@ -17,7 +17,7 @@ data class Titulo(
     val generos: List<Genero>,
     // val personas: List<Persona>,
     val plataformas: List<Plataforma>,
-    // val estrenos: List<Estreno>,
+    val estrenos: List<Estreno>,
     // val top10: List<Top10>
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -34,7 +34,7 @@ data class Titulo(
         parcel.createTypedArrayList(Genero.CREATOR) ?: emptyList(),
         // parcel.createTypedArrayList(Persona.CREATOR) ?: emptyList(),
         parcel.createTypedArrayList(Plataforma.CREATOR) ?: emptyList(),
-        // parcel.createTypedArrayList(Estreno.CREATOR) ?: emptyList(),
+         parcel.createTypedArrayList(Estreno.CREATOR) ?: emptyList(),
         // parcel.createTypedArrayList(Top10.CREATOR) ?: emptyList()
     )
 
@@ -52,7 +52,7 @@ data class Titulo(
         parcel.writeTypedList(generos)
         // parcel.writeTypedList(personas)
         parcel.writeTypedList(plataformas)
-        // parcel.writeTypedList(estrenos)
+        parcel.writeTypedList(estrenos)
         // parcel.writeTypedList(top10)
     }
 
