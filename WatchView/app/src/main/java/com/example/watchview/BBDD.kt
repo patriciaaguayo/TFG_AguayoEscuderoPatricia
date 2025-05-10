@@ -1668,7 +1668,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 insertFechaTop10,
                 insertPlataformaTop10Separado,
                 insertTopsSeparadosTop10,
-                insertPosicionesTop102
+                insertPosicionesTop10
             ).forEach { db.execSQL(it.trimIndent()) }
 
             db.setTransactionSuccessful()
