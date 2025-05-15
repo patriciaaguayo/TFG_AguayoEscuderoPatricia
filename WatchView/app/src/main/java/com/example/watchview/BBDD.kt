@@ -2331,64 +2331,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             }
         }
     }
-
-
-
-
-    fun revisarEstrenosYActualizarListas(context: Context) {
-        val db = this.writableDatabase
-        val fechaHoy = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(java.util.Date())
-        val estrenos = obtenerEstrenos() // Esta función debería traerte todos los estrenos con sus idEstreno, fecha y idTitulo
-
-        for (estreno in estrenos) {
-            val idEstreno = estreno.idEstreno
-            val idTitulo = estreno.idTitulo
-            val fechaEstreno = estreno.fechaEstreno
-
-            if (fechaEstreno == fechaHoy) {
-                obtenerNombreTitulo(idTitulo)?.let {
-                    mostrarNotificacionDeEstreno(context, it)
-                }
-            }
-
-            if (fechaEstreno < fechaHoy) {
-                // Obtener usuarios que tienen este estreno guardado
-                val cursor = db.rawQuery(
-                    "SELECT correo FROM Estreno_Usuario WHERE idEstreno = ?",
-                    arrayOf(idEstreno.toString())
-                )
-
-                while (cursor.moveToNext()) {
-                    val correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
-
-                    // Verificamos si ya está en Usuario_Titulo
-                    val checkCursor = db.rawQuery(
-                        "SELECT 1 FROM Usuario_Titulo WHERE correo = ? AND idTitulo = ?",
-                        arrayOf(correo, idTitulo)
-                    )
-                    if (!checkCursor.moveToFirst()) {
-                        val values = ContentValues().apply {
-                            put("correo", correo)
-                            put("idTitulo", idTitulo)
-                        }
-                        db.insert("Usuario_Titulo", null, values)
-                    }
-                    checkCursor.close()
-                }
-
-                cursor.close()
-
-                // Limpieza de tablas relacionadas con el estreno
-                db.delete("Estreno_Usuario", "idEstreno = ?", arrayOf(idEstreno.toString()))
-                db.delete("Estreno_Plataforma", "idEstreno = ?", arrayOf(idEstreno.toString()))
-                db.delete("Estreno_Titulo", "idEstreno = ?", arrayOf(idEstreno.toString()))
-                db.delete("Estreno", "idEstreno = ?", arrayOf(idEstreno.toString()))
-            }
-        }
-
-        db.close()
-    }
-
+    
     fun mostrarNotificacionDeEstreno(context: Context, titulo: String) {
         val channelId = "estrenos_channel"
         val channelName = "Notificaciones de Estrenos"
