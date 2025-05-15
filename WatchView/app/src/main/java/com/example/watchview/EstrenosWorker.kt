@@ -13,8 +13,6 @@ class EstrenosWorker(
     override fun doWork(): Result {
         val db = BBDD(applicationContext)
 
-        // Aquí haces la lógica de actualización de los estrenos
-
         val estrenos = db.listarTitulosPorPlataformaConEstreno("netflix")
         Log.d("EstrenosWorker", "Se actualizaron ${estrenos.size} estrenos")
 

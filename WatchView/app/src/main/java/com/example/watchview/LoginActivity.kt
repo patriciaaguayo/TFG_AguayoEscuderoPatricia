@@ -79,11 +79,6 @@ class LoginActivity : AppCompatActivity() {
             iniciarSesion()
         }
 
-        // Cargar géneros y títulos si no están guardados
-        /*if(!BBDD(this@LoginActivity).hayGenerosGuardados()){
-            ApiDataLoader.fetchGenresFromApi(this@LoginActivity)
-        }*/
-
         lifecycleScope.launch {
             val listaSeries = listOf(
                 "El descubrimiento de las brujas",
@@ -109,13 +104,14 @@ class LoginActivity : AppCompatActivity() {
                 ApiDataLoader.fetchGenresFromApi(this@LoginActivity)
             }
 
+            //db.insertGeneros() // si se quiere trabajar en locar quitar de comentarios y comentar el if de arriba
+
             // Aquí se queda esperando a que terminen antes de seguir
-            ApiDataLoader.guardarTitulosPorNombreSeries(this@LoginActivity, listaSeries)
-            ApiDataLoader.guardarTitulosPorNombrePeliculas(this@LoginActivity, listaPeliculas)
+            ApiDataLoader.guardarTitulosPorNombreSeries(this@LoginActivity, listaSeries) // Comentar para trabajar en local
+            ApiDataLoader.guardarTitulosPorNombrePeliculas(this@LoginActivity, listaPeliculas) // Comentar para trabajar en local
 
             // Ahora ya han terminado, puedes insertar
 
-            //db.insertGeneros()
             db.insertAllTop10Data()
             db.insertAllEstrenosData()
             db.insertUsuarioEstreno(3, "paco@gmail.com")

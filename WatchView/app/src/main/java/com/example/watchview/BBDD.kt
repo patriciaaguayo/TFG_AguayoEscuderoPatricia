@@ -87,23 +87,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             );
         """
 
-        /*val tablaPersona = """
-            CREATE TABLE Persona (
-                idPersona INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombrePersona TEXT NOT NULL
-            );
-        """
-
-        val tablaPersona_Titulo = """
-            CREATE TABLE Persona_Titulo (
-                idPersona INTEGER,
-                idTitulo INTEGER,
-                PRIMARY KEY (idPersona, idTitulo),
-                FOREIGN KEY (idPersona) REFERENCES Persona(idPersona),
-                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
-            );
-        """*/
-
         val tablaPlataforma = """
             CREATE TABLE Plataforma (
                 idPlataforma TEXT PRIMARY KEY,
@@ -219,8 +202,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             );
         """
 
-        val tablaTop10Separado_Plataforma = """
-            CREATE TABLE Top10Separado_Plataforma (
+        val tablaTop10_Plataforma = """
+            CREATE TABLE Top10_Plataforma (
                 idTop INTEGER,
                 idPlataforma TEXT,
                 PRIMARY KEY (idTop, idPlataforma),
@@ -228,17 +211,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
             );
         """
-
-        val tablaTop10Mezclado_Plataforma = """
-            CREATE TABLE Top10Mezclado_Plataforma (
-                idTop INTEGER,
-                idPlataforma TEXT,
-                PRIMARY KEY (idTop, idPlataforma),
-                FOREIGN KEY (idTop) REFERENCES Top10(idTop),
-                FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
-            );
-        """
-
 
         val insertFotoPerfil = """
             INSERT INTO FotoPerfil (nombreFoto)
@@ -427,7 +399,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """
 
         val insertPlataformaTop10Separado = """
-            INSERT INTO Top10Separado_Plataforma (idTop, idPlataforma)
+            INSERT INTO Top10_Plataforma (idTop, idPlataforma)
             VALUES 
 
             (1,"netflix"),
@@ -440,8 +412,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaPoster_Titulo)
         db.execSQL(tablaGenero)
         db.execSQL(tablaGenero_Titulo)
-        //db.execSQL(tablaPersona)
-        // db.execSQL(tablaPersona_Titulo)
         db.execSQL(tablaPlataforma)
         db.execSQL(tablaPlataforma_Titulo)
         db.execSQL(tablaUsuario_Titulo)
@@ -455,8 +425,8 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL(tablaTop10Mezclado)
         db.execSQL(tablaTop10Separado)
         db.execSQL(tablaTop10_Titulo)
-        db.execSQL(tablaTop10Separado_Plataforma)
-        db.execSQL(tablaTop10Mezclado_Plataforma)
+        db.execSQL(tablaTop10_Plataforma)
+        //db.execSQL(tablaTop10Mezclado_Plataforma)
         db.execSQL(insertFotoPerfil)
         db.execSQL(insertAdmin)
         db.execSQL(insertUsuario)
@@ -495,8 +465,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         db.execSQL("DROP TABLE IF EXISTS Top10")
         db.execSQL("DROP TABLE IF EXISTS Top10Mezclado")
         db.execSQL("DROP TABLE IF EXISTS Top10Separado")
-        db.execSQL("DROP TABLE IF EXISTS Top10Separado_Titulo")
-        db.execSQL("DROP TABLE IF EXISTS Top10Mezclado_Titulo")
+        db.execSQL("DROP TABLE IF EXISTS Top10_Titulo")
         db.execSQL("DROP TABLE IF EXISTS Top10_Plataforma")
 
         onCreate(db)
@@ -1462,7 +1431,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     // Metodo para intertar los títulos del top 10 manualmente en la BBDD
 
     private val insertTitulosTop10Series = """
-            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, fechaFin, temporadas, tipo, rating)
+            INSERT OR IGNORE INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, fechaFin, temporadas, tipo, rating)
             VALUES 
 
             ("17340436", "El jardinero", "El jardinero", "Aunque aparenta ser un hábil jardinero en Pontevedra, Elmer es en realidad un sicario a las órdenes de su madre... hasta que se enamora de su víctima y lo pone todo en peligro.", "2025", "2025", 1, "series", 50), 
@@ -1479,7 +1448,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertTitulosTop10Peliculas = """
-            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, tipo, rating)
+            INSERT OR IGNORE INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, tipo, rating)
             VALUES 
 
             ("8954753", "Sin instrucciones", "Sin instrucciones", "Un soltero vive la vida sin preocupaciones hasta que su ex aparece y le deja a cargo de su bebé. Ochos años después, ella vuelve buscando el perdón... y recuperar a su hija.", "2024", "movie", 50), 
@@ -1488,7 +1457,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertPostersTop10 = """
-            INSERT INTO Poster_Titulo (urlPoster, tipo, calidad, idTitulo)
+            INSERT OR IGNORE INTO Poster_Titulo (urlPoster, tipo, calidad, idTitulo)
             VALUES 
 
             ("https://www.lavanguardia.com/peliculas-series/images/serie/poster/2025/4/w300/8nEYffm7XDQXSGoh1Ce0jvd45AO.jpg", "vertical", "w360","17340436"),
@@ -1533,7 +1502,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertGenerosTop10 = """
-            INSERT INTO Genero_Titulo (idGenero, idTitulo)
+            INSERT OR IGNORE INTO Genero_Titulo (idGenero, idTitulo)
             VALUES 
 
             ("drama","17340436"),
@@ -1565,7 +1534,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertPlataformasTop10 = """
-            INSERT INTO Plataforma_Titulo (idPlataforma, idTitulo, pais, disponible)
+            INSERT OR IGNORE INTO Plataforma_Titulo (idPlataforma, idTitulo, pais, disponible)
             VALUES 
 
             ("netflix","17340436", "es", 1),
@@ -1579,7 +1548,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertFechaTop10 = """
-            INSERT INTO Top10 (fechaTop)
+            INSERT OR IGNORE INTO Top10 (fechaTop)
             VALUES 
             
             ("23-04-2025"),
@@ -1587,7 +1556,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertTopsSeparadosTop10 = """
-            INSERT INTO Top10Separado (idTop, tipo)
+            INSERT OR IGNORE INTO Top10Separado (idTop, tipo)
             VALUES 
 
             (1,"series"),
@@ -1595,7 +1564,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertPosicionesTop10 = """
-            INSERT INTO Top10_Titulo (idTop, idTitulo, posicion)
+            INSERT OR IGNORE INTO Top10_Titulo (idTop, idTitulo, posicion)
             VALUES 
 
             (1,"17340436",1),
@@ -1622,7 +1591,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertPosicionesTop102 = """
-            INSERT INTO Top10_Titulo (idTop, idTitulo, posicion)
+            INSERT OR IGNORE INTO Top10_Titulo (idTop, idTitulo, posicion)
             VALUES 
 
             (1,"17340436",1),
@@ -1637,7 +1606,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertPlataformaTop10Separado = """
-            INSERT INTO Top10Separado_Plataforma (idTop, idPlataforma)
+            INSERT OR IGNORE INTO Top10_Plataforma (idTop, idPlataforma)
             VALUES 
 
             (1,"netflix"),
@@ -1668,7 +1637,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 insertFechaTop10,
                 insertPlataformaTop10Separado,
                 insertTopsSeparadosTop10,
-                insertPosicionesTop10
+                insertPosicionesTop10 // Si se quiere trabajar en local cambiar a insertPosicionesTop102
             ).forEach { db.execSQL(it.trimIndent()) }
 
             db.setTransactionSuccessful()
@@ -1698,7 +1667,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         SELECT T.idTitulo, T.nombre, T.nombreOriginal, T.descripcion, T.fechaInicio, 
                T.fechaFin, T.temporadas, T.tipo, T.rating, TT.posicion
         FROM Top10Separado TS
-        JOIN Top10Separado_Plataforma TP ON TS.idTop = TP.idTop
+        JOIN Top10_Plataforma TP ON TS.idTop = TP.idTop
         JOIN Top10_Titulo TT ON TS.idTop = TT.idTop
         JOIN Titulo T ON TT.idTitulo = T.idTitulo
         JOIN Plataforma_Titulo PT ON T.idTitulo = PT.idTitulo
@@ -1893,10 +1862,10 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         return estrenos
     }
 
-    // Verificación si la plataforma ya está en la tabla Top10Separado_Plataforma
+    // Verificación si la plataforma ya está en la tabla Top10_Plataforma
     private fun existeTop10SeparadoPlataforma(db: SQLiteDatabase, idPlataforma: String): Boolean {
         val cursor = db.query(
-            "Top10Separado_Plataforma",
+            "Top10_Plataforma",
             arrayOf("idPlataforma"),
             "idPlataforma = ?",
             arrayOf(idPlataforma),
@@ -1953,7 +1922,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     // Insertar los estrenos manualmente en la BBDD
 
     private val insertTitulosEstrenosSeries = """
-            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, fechaFin, temporadas, tipo, rating)
+            INSERT OR IGNORE INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, fechaFin, temporadas, tipo, rating)
             VALUES 
 
             ("185", "You", "You", "Cuando un brillante administrador de librería se cruza con una aspirante a escritora, utiliza Internet y las redes sociales para reunir los detalles más intimos y acercarse a ella.", "2018", "2025", 5, "series", 77),
@@ -1962,7 +1931,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertTitulosEstrenosPeliculas = """
-            INSERT INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, tipo, rating)
+            INSERT OR IGNORE INTO Titulo (idTitulo, nombre, nombreOriginal, descripcion, fechaInicio, tipo, rating)
             VALUES 
 
             ("14625603", "Mala influencia", "Mala influencia", "Un expresidiario empieza de cero cuando lo contratan para proteger a una rica heredera de un acosador pero, a medida que se conocen, cuesta resistirse a su química.", "2025", "movie", 55), 
@@ -1971,7 +1940,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertPostersEstrenos = """
-            INSERT INTO Poster_Titulo (urlPoster, tipo, calidad, idTitulo)
+            INSERT OR IGNORE INTO Poster_Titulo (urlPoster, tipo, calidad, idTitulo)
             VALUES 
 
             ("https://pbs.twimg.com/media/GpTpqB5XEAA0BRY.jpg", "vertical", "w360","185"),
@@ -1996,7 +1965,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertGenerosEstrenos = """
-            INSERT INTO Genero_Titulo (idGenero, idTitulo)
+            INSERT OR IGNORE INTO Genero_Titulo (idGenero, idTitulo)
             VALUES 
 
             ("comedy","18436084"),
@@ -2013,7 +1982,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         """.trimIndent()
 
     private val insertPlataformasEstrenos = """
-            INSERT INTO Plataforma_Titulo (idPlataforma, idTitulo, pais, disponible)
+            INSERT OR IGNORE INTO Plataforma_Titulo (idPlataforma, idTitulo, pais, disponible)
             VALUES 
 
             ("netflix","18436084", "es", 1),
@@ -2032,12 +2001,12 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
      */
 
     private val insertEstrenos = """
-            INSERT INTO Estreno (fechaEstreno)
+            INSERT OR IGNORE INTO Estreno (fechaEstreno)
             VALUES 
 
             ("2025-05-09"),
             ("2025-05-25"),
-            ("2025-05-08"),
+            ("2025-05-09"),
             ("2025-05-14");
         """.trimIndent()
 
@@ -2052,7 +2021,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
      */
 
     private val insertEstrenosSeries = """
-            INSERT INTO Estreno_Serie (idEstreno, temporada)
+            INSERT OR IGNORE INTO Estreno_Serie (idEstreno, temporada)
             VALUES 
 
             (3,5),
@@ -2069,7 +2038,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
      */
 
     private val insertEstrenosPeliculas = """
-            INSERT INTO Estreno_Pelicula (idEstreno)
+            INSERT OR IGNORE INTO Estreno_Pelicula (idEstreno)
             VALUES 
 
             (1),
@@ -2088,7 +2057,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     */
 
     private val insertEstrenosTitulos = """
-        INSERT INTO Estreno_Titulo (idEstreno, idTitulo)
+        INSERT OR IGNORE INTO Estreno_Titulo (idEstreno, idTitulo)
         VALUES 
         (1, "14625603"),
         (2, "16692284"),
@@ -2108,7 +2077,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     */
 
     private val insertEstrenosPlataforma = """
-        INSERT INTO Estreno_Plataforma (idEstreno, idPlataforma)
+        INSERT OR IGNORE INTO Estreno_Plataforma (idEstreno, idPlataforma)
         VALUES 
         (1, "netflix"),
         (2, "netflix"),
@@ -2313,65 +2282,56 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
     // Función para revisar los estrenos y actualizar las listas
 
     fun revisarEstrenosYActualizarListas2(context: Context) {
-        val db = this.writableDatabase
+
         val formatoFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val fechaHoyDate = formatoFecha.parse(formatoFecha.format(java.util.Date()))
         val estrenos = obtenerEstrenos() // List<Estreno>
 
-        for (estreno in estrenos) {
-            val idEstreno = estreno.idEstreno
-            val idTitulo = estreno.idTitulo
-            val fechaEstrenoDate = formatoFecha.parse(estreno.fechaEstreno)
+        this.writableDatabase.use { db -> // 'db' es la base de datos dentro de este bloque 'use'
+            for (estreno in estrenos) {
+                val idEstreno = estreno.idEstreno
+                val idTitulo = estreno.idTitulo
+                val fechaEstrenoDate = formatoFecha.parse(estreno.fechaEstreno)
 
-            if (fechaEstrenoDate != null && fechaHoyDate != null) {
-
-                if (fechaEstrenoDate == fechaHoyDate) {
-                    obtenerNombreTitulo(idTitulo)?.let {
-                        mostrarNotificacionDeEstreno2(context, it)
-                        actualizarTodosLosTitulosVistos()
-                        listarTitulosPorPlataformaConEstreno("netflix")
-                    }
-                }
-
-                if (fechaEstrenoDate <= fechaHoyDate) {
-                    val cursor = db.rawQuery(
-                        "SELECT correo FROM Estreno_Usuario WHERE idEstreno = ?",
-                        arrayOf(idEstreno.toString())
-                    )
-
-                    while (cursor.moveToNext()) {
-                        val correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
-
-                        val checkCursor = db.rawQuery(
-                            "SELECT 1 FROM Usuario_Titulo WHERE correo = ? AND idTitulo = ?",
-                            arrayOf(correo, idTitulo)
-                        )
-                        if (!checkCursor.moveToFirst()) {
-                            val values = ContentValues().apply {
-                                put("correo", correo)
-                                put("idTitulo", idTitulo)
-                            }
-                            db.insert("Usuario_Titulo", null, values)
+                if (fechaEstrenoDate != null && fechaHoyDate != null) {
+                    if (fechaEstrenoDate == fechaHoyDate) {
+                        obtenerNombreTitulo(idTitulo)?.let {
+                            mostrarNotificacionDeEstreno2(context, it)
+                            actualizarTodosLosTitulosVistos()
+                            listarTitulosPorPlataformaConEstreno("netflix")
                         }
-                        checkCursor.close()
                     }
-                    cursor.close()
 
-                    // Eliminación de registros asociados al estreno
-                    db.delete("Estreno_Usuario", "idEstreno = ?", arrayOf(idEstreno.toString()))
-                    db.delete("Estreno_Plataforma", "idEstreno = ?", arrayOf(idEstreno.toString()))
-                    db.delete("Estreno_Titulo", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                    if (fechaEstrenoDate <= fechaHoyDate) {
+                        val cursor = db.rawQuery(
+                            "SELECT correo FROM Estreno_Usuario WHERE idEstreno = ?",
+                            arrayOf(idEstreno.toString())
+                        )
 
-                    // Nueva función para determinar tipo y eliminar de tabla correspondiente
-                    eliminarEstrenoPorTipo(db, idEstreno, idTitulo)
+                        while (cursor.moveToNext()) {
+                            val correo = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
 
-                    db.delete("Estreno", "idEstreno = ?", arrayOf(idEstreno.toString()))
+                            val checkCursor = db.rawQuery(
+                                "SELECT 1 FROM Usuario_Titulo WHERE correo = ? AND idTitulo = ?",
+                                arrayOf(correo, idTitulo)
+                            )
+                            if (!checkCursor.moveToFirst()) {
+                                val values = ContentValues().apply {
+                                    put("correo", correo)
+                                    put("idTitulo", idTitulo)
+                                }
+                                db.insert("Usuario_Titulo", null, values)
+                            }
+                            checkCursor.close()
+                        }
+                        cursor.close()
+
+                    }
                 }
             }
         }
-
-        db.close()
     }
+
 
 
 
@@ -2476,6 +2436,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 description = "Notifica cuando se estrenan títulos"
             }
             notificationManager.createNotificationChannel(channel)
+            Log.d("MostrarNotificacion", "Canal de notificación creado con éxito")
         }
 
         // Cargar el icono de la app desde los recursos

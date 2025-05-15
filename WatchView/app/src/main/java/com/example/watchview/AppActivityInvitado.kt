@@ -15,6 +15,8 @@ class AppActivityInvitado : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_app_invitado)
 
+        //Comentar para trabajar en local
+
         if(!BBDD(this).hayTitulosGuardados()){
             ApiDataLoader.guardarTitulosNetflix2(this)
         }
