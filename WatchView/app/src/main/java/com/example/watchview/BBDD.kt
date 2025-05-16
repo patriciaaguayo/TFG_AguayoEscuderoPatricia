@@ -2331,7 +2331,7 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             }
         }
     }
-    
+
     fun mostrarNotificacionDeEstreno(context: Context, titulo: String) {
         val channelId = "estrenos_channel"
         val channelName = "Notificaciones de Estrenos"
@@ -2522,10 +2522,11 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
                 put("correo", correo)
             }
 
-            db.insertOrThrow("Estreno_Usuario", null, values)
+            // INSERT OR IGNORE
+            db.insertWithOnConflict("Estreno_Usuario", null, values, SQLiteDatabase.CONFLICT_IGNORE)
             db.setTransactionSuccessful()
 
-            Log.d("BBDD", "Estreno guardado correctamente")
+            Log.d("BBDD", "Estreno guardado correctamente (o ya existía)")
         } catch (e: Exception) {
             Log.e("BBDD", "Error al guardar estreno: ${e.message}")
         } finally {
