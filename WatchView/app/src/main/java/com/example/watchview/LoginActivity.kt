@@ -114,7 +114,7 @@ class LoginActivity : AppCompatActivity() {
 
             db.insertAllTop10Data()
             db.insertAllEstrenosData()
-            db.insertUsuarioEstreno(3, "paco@gmail.com")
+            //db.insertUsuarioEstreno(3, "paco@gmail.com") para probar la insercción de un estreno en el usuario
 
             Toast.makeText(this@LoginActivity, "Todo cargado correctamente", Toast.LENGTH_SHORT).show()
         }

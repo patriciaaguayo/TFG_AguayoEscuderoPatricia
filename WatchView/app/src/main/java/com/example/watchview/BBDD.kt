@@ -1991,34 +1991,15 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             ("netflix","16692284", "es", 1);
         """.trimIndent()
 
-    /*val tablaEstreno = """
-            CREATE TABLE Estreno (
-                idEstreno INTEGER PRIMARY KEY AUTOINCREMENT,
-                fechaEstreno TEXT NOT NULL
-            );
-        """
-
-     */
-
     private val insertEstrenos = """
             INSERT OR IGNORE INTO Estreno (fechaEstreno)
             VALUES 
 
-            ("2025-05-09"),
-            ("2025-05-25"),
-            ("2025-05-09"),
-            ("2025-05-14");
+            ("2025-05-19"),
+            ("2025-06-25"),
+            ("2025-05-20"),
+            ("2025-06-13");
         """.trimIndent()
-
-    /*val tablaEstreno_Serie = """
-            CREATE TABLE Estreno_Serie (
-                idEstreno INTEGER PRIMARY KEY,
-                temporada INTEGER NOT NULL,
-                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno)
-            );
-        """
-
-     */
 
     private val insertEstrenosSeries = """
             INSERT OR IGNORE INTO Estreno_Serie (idEstreno, temporada)
@@ -2028,15 +2009,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             (4,1); 
         """.trimIndent()
 
-    /*val tablaEstreno_Pelicula = """
-            CREATE TABLE Estreno_Pelicula (
-                idEstreno INTEGER PRIMARY KEY,
-                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno)
-            );
-        """
-
-     */
-
     private val insertEstrenosPeliculas = """
             INSERT OR IGNORE INTO Estreno_Pelicula (idEstreno)
             VALUES 
@@ -2044,17 +2016,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
             (1),
             (2); 
         """.trimIndent()
-
-    /*val tablaEstreno_Titulo = """
-            CREATE TABLE Estreno_Titulo (
-                idEstreno INTEGER,
-                idTitulo TEXT,
-                PRIMARY KEY (idEstreno, idTitulo),
-                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
-                FOREIGN KEY (idTitulo) REFERENCES Titulo(idTitulo)
-            );
-        """
-    */
 
     private val insertEstrenosTitulos = """
         INSERT OR IGNORE INTO Estreno_Titulo (idEstreno, idTitulo)
@@ -2064,17 +2025,6 @@ class BBDD(context: Context) : SQLiteOpenHelper(context, "WatchViewBBDD.db", nul
         (3, "185"),
         (4, "18436084");
     """.trimIndent()
-
-    /*val tablaEstreno_Plataforma = """
-            CREATE TABLE Estreno_Plataforma (
-                idEstreno INTEGER,
-                idPlataforma TEXT,
-                PRIMARY KEY (idEstreno, idPlataforma),
-                FOREIGN KEY (idEstreno) REFERENCES Estreno(idEstreno),
-                FOREIGN KEY (idPlataforma) REFERENCES Plataforma(idPlataforma)
-            );
-        """
-    */
 
     private val insertEstrenosPlataforma = """
         INSERT OR IGNORE INTO Estreno_Plataforma (idEstreno, idPlataforma)
