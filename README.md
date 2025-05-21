@@ -11,7 +11,7 @@
 - Wishlist personalizada para cada usuario.
 - Notificaciones automáticas al producirse un estreno.
 - Modo **usuario**, **administrador** e **invitado**.
-- Interfaz oscura y moderna, diseñada con [Figma](https://www.figma.com/).
+- Interfaz oscura y moderna, diseñada con [Figma]([https://www.figma.com/](https://www.figma.com/proto/BgUxgvSB3banSWmLuBIqng/Mock-Up-TFG?node-id=0-1&t=1Cs6yt1wetdi3N6W-1)).
 
 ---
 
